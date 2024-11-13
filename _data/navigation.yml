@@ -5,14 +5,14 @@
 # prevent it from being included in the site.
 
 main:
-  - title: "Blogs"
+  - title: "Thoughts"
     url: /year-archive/
 
-  - title: "Publications"
-    url: /publications/
+  - title: "Papers"
+    url: /papers/
     
   - title: "CV"
-    url: /cv/
+    url: /files/Ujan_CV_Aug24.pdf
     
   - title: "Guide"
     url: /markdown/
