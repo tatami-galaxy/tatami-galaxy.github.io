@@ -1,6 +1,6 @@
 ---
 permalink: /
-title: "Hello :wave:"
+title: "Hi :wave:"
 author_profile: true
 redirect_from: 
   - /about/
