@@ -1,7 +1,7 @@
 ---
 title: 'First Post'
 date: 2024-11-14
-permalink: /posts/2024-11-14-blog-post-1/
+permalink: /posts/2024-11-14-interp-post-1/
 tags:
   - category1
 ---
