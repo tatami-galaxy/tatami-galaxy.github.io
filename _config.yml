@@ -21,7 +21,7 @@ repository               : "tatami-galaxy/tatami-galaxy.github.io"
 #               Additional customization can be done by editing /_includes/author-profile.html
 author:
   # Biographic information
-  avatar           : "cat.webp"
+  avatar           : "cat.jpg"
   name             : "Ujan"
   pronouns         : "he/him"  
   bio              : "NLP Researcher"
