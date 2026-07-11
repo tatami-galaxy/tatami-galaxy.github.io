@@ -4,11 +4,22 @@ date: 2026-07-01
 permalink: /posts/2026-07-01-self-distillation-post-1./
 ---
 
-Self Distillation has recently come up as a promising direction for langauge model post training. It targets two major shortcomings of dominant RL based post training algorithms like GRPO. GRPO requires a verifier signal (ex : answer correctness) which might be hard to obtain for tasks where there isnt a clear notion of correctness. GRPO also has a credit assignment problem : for positive advantages, every token in the rollout is equally upweighted. The algorithm cannot assign granular credit to parts of the rollout, unlike its predecessor PPO, which suffers from its own inefficiencies and instabilites. 
+Self Distillation has recently come up as a promising direction for language model post training. It targets two major shortcomings of dominant RL based post training algorithms like GRPO. GRPO requires a verifier signal (ex : answer correctness) which might be hard to obtain for tasks where there isnt a clear notion of correctness. GRPO also has a credit assignment problem : for positive advantages, every token in the rollout is equally upweighted. The algorithm cannot assign granular credit to parts of the rollout, unlike its predecessor PPO, which suffers from its own inefficiencies and instabilities. 
 
-Self Distillation instead distills from the self-teacher; a privilged information (PI) conditioned student model where the PI can be the correct answer, a demonstration, environment feedback etc. This has the advantage of granular feedback : the logit level KL (or some other f-divergence) at every token position is non-uniform. Ideally (we hope) it upweights correct tokens while downweighting incorrect ones. It also does not necessarily require a verifier : the PI can be constructed from any "helpful" information. The key assumption here is that the model's own in-context learning (ICL) abilities will allow it accurately leverage PI to not only solve the problem (it can do so trivially when the PI is a demonstration), but to also accurately critque[^critique] its own rollouts. 
+Self Distillation instead distills from the self-teacher; a privileged information (PI) conditioned student model where the PI can be the correct answer, a demonstration, environment feedback etc. This has the advantage of granular feedback : the logit level KL (or some other f-divergence) at every token position is non-uniform. Ideally (we hope) it upweights correct tokens while downweighting incorrect ones. It also does not necessarily require a verifier : the PI can be constructed from any "helpful" information. The key assumption here is that the model's own in-context learning (ICL) abilities will allow it accurately leverage PI to not only solve the problem (it can do so trivially when the PI is a demonstration), but to also accurately critique[^critique] its own rollouts. 
 
-While this works well for a range of domains, it can lead to training collapse for reasoning tasks like math and code. It seems to stem from the fact that while the PI conditioned model can reach the correct answer, the PI in its context makes its behaviour different from a strong teacher model with no PI. We will think about if and how we can construct better PI which induces desirable behaviours in the self-teacher. Before that lets step back and think about what we want self-distillation to do. Here we will only think about intuitions and leave rigorous arugments for later. We want several things : 
+While this works well for a range of domains, it can lead to training collapse in thinking models for reasoning tasks like math and code. It seems to stem from the fact that while the PI conditioned model can reach the correct answer, the PI in its context makes its behavior different from a strong teacher model with no PI. Concretely, the PI makes the self-teacher increasingly confident which causes it to penalizing uncertainty verbalization and exploration, essential for thinking models [cite].
+
+In order to somewhat quantify this, lets try to analyze the behavior of the self-teacher under different PIs. Assuming our data has expert demonstrations (from a larger LLM), we will analyze three simple choices of PI : full solution, final answer, and a self generated hint from the full solution. We will also compare this with the teacher behavior in on-policy distillation from a stronger teacher. What are some useful behaviors we can analyze? 
+
+- Number of generated tokens
+- Uncertainty verbalization
+- Credit assignment
+- Backtracking, verification, backward-chaining, subgoal setting
+- Underthinking
+
+
+Now lets step back and think about what we want self-distillation to do. Here we will only think about intuitions and leave rigorous arguments for later. We want several things : 
 
 - Granular credit assignment
 - Low bias
