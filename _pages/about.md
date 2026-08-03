@@ -7,4 +7,4 @@ redirect_from:
   - /about.html
 ---
 
-I'm an NLP researcher interested in interpretability of language and vision-language models.
+I'm an NLP researcher interested in designing efficient post-training algorithms for language models and interpretability of language models. I'm also curious about alternative language modeling paradigms such as flow and diffusion based models.
