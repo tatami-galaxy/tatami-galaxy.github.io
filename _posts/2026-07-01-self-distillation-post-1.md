@@ -4,46 +4,55 @@ date: 2026-07-01
 permalink: /posts/2026-07-01-self-distillation-post-1./
 ---
 
-Policy gradient based post-training has become an important driver of rapidly improving LLM capabilities, particularly in verifiable domains such as mathematics and code [[1]](#ref-1). InstructGPT [[2]](#ref-2) was among the first major success stories which used the PPO algorithm [[3]](#ref-3) with a learned reward model to train a language model towards human preferences. While powerful under carefully tuned hyperparameters, PPO comes with its own challenges. PPO's actor-critic formulation requires training a value function along with the model, which is usually LLM initialized from a reward model. This adds significant computational overhead and training instability at frontier scale. Initializing the value function from a reward model has its own problems [[5]](#ref-5). Shao et al. introduced GRPO to tackle the memory and training instabilities of PPO at scale.[[4]](#ref-4). GRPO eliminates the value function entirely. To compute the advantage, GRPO instead samples a group of $$G$$ responses to the same prompt and uses their relative rewards as a baseline. A simplified form of its clipped surrogate objective is
+## Introduction
 
-$$
-J_{\mathrm{GRPO}}(\theta) = \mathbb{E}\!\left[\frac{1}{G}\sum_{i=1}^{G}\frac{1}{T_i}\sum_{t=1}^{T_i}
-\left(\min\!\left(\rho_{i,t}(\theta)\hat{A}_i,
-\operatorname{clip}\!\left(\rho_{i,t}(\theta),1-\epsilon,1+\epsilon\right)\hat{A}_i\right)
-- \beta D_{\mathrm{KL}}\!\left(\pi_\theta\,\|\,\pi_{\mathrm{ref}}\right)\right)\right],
-$$
-
-where $$\rho_{i,t}(\theta)=\frac{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}{\pi_{\theta_{\mathrm{old}}}(o_{i,t}\mid q,o_{i,<t})}$$ is the policy probability ratio. With outcome-level rewards, the group-relative advantage is
+Policy gradient based post-training has become an important driver of rapidly improving LLM capabilities, particularly in verifiable domains such as math and code [[1]](#ref-1). InstructGPT [[2]](#ref-2) was among the first major success stories which used the PPO algorithm [[3]](#ref-3) with a learned reward model to train a language model towards human preferences. While powerful under carefully tuned hyperparameters, PPO comes with its own challenges. PPO's actor-critic formulation requires training a value function along with the model, which is usually another LLM initialized from a reward model. This adds significant computational overhead and training instability at frontier scale. Initializing the value function from a reward model has its own problems [[5]](#ref-5). Shao et al. introduced GRPO to tackle the memory and training instabilities of PPO at scale.[[4]](#ref-4). GRPO eliminates the value function entirely. To compute the advantage, GRPO instead samples a group of $$G$$ responses to the same prompt and uses their relative rewards as a baseline. Assuming outcome rewards $$r_i$$ the advantage becomes : 
 
 $$
 \hat{A}_i = \frac{r_i-\operatorname{mean}(r_1,\ldots,r_G)}{\operatorname{std}(r_1,\ldots,r_G)},
 $$
 
-Treating the sampled advantages as constants during the update, differentiating the surrogate objective gives the GRPO policy gradient
-
-$$
-\nabla_\theta J_{\mathrm{GRPO}}(\theta)
-= \mathbb{E}\!\left[\frac{1}{G}\sum_{i=1}^{G}\frac{1}{T_i}\sum_{t=1}^{T_i}
-\left(
-\nabla_\theta \min\!\left(\rho_{i,t}(\theta)\hat{A}_i,
-\operatorname{clip}\!\left(\rho_{i,t}(\theta),1-\epsilon,1+\epsilon\right)\hat{A}_i\right)
-- \beta\nabla_\theta D_{\mathrm{KL}}\!\left(\pi_\theta\,\|\,\pi_{\mathrm{ref}}\right)
-\right)\right].
-$$
-
-For a token whose probability ratio is not clipped, the policy-gradient term reduces to the familiar score-function form
+GRPO uses a PPO style clipped objective function with a KL anchor on the reference policy. More recent GRPO variants have done away with the KL term [[6]](#ref-6). Ignoring the clipping and KL penalty, the policy-gradient term has the same well known policy gradient form : 
 
 $$
 \nabla_\theta J_{\mathrm{GRPO}}(\theta)
 \approx \mathbb{E}\!\left[\frac{1}{G}\sum_{i=1}^{G}\frac{1}{T_i}\sum_{t=1}^{T_i}
 \rho_{i,t}(\theta)\hat{A}_i\nabla_\theta
-\log \pi_\theta(o_{i,t}\mid q,o_{i,<t})
-- \beta\nabla_\theta D_{\mathrm{KL}}\!\left(\pi_\theta\,\|\,\pi_{\mathrm{ref}}\right)\right].
+\log \pi_\theta(o_{i,t}\mid q,o_{i,<t})\right].
 $$
 
-The same $$\hat{A}_i$$ is assigned to every token in response $$i$$. This removes the value model, but it also means that outcome-level GRPO does not distinguish between the helpful and unhelpful tokens within a successful response [[4]](#ref-4).
+where $$\rho_{i,t}(\theta)=\frac{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}{\pi_{\theta_{\mathrm{old}}}(o_{i,t}\mid q,o_{i,<t})}$$ is the importance sampling ratio (useful even in a purely on-policy setting).
+
+GRPO has proved to be quite successful for post-training LLMs in verifiable domains [[1]](#ref-1) [[4]](#ref-4). Over the last couple of years it has spawned numerous variants that tackle its different amendable shortcomings [[6]](#ref-6) [[7]](#ref-7) [[8]](#ref-8). *Halving* the memory overhead and alleviating training instabilities of PPO, that become more and more acute at frontier scale, is naturally quite appealing. GRPO however is fundamentally incapable of a particularly desirable attribute of PPO : granular credit assignment per rollout.
+
+<figure>
+  <img src="/images/ppo-token-level-credit-v5.png" alt="PPO uses a learned value function and generalized advantage estimation to assign different credit to individual tokens in a rollout." style="width: 100%; margin-bottom: 1rem;">
+  <img src="/images/grpo-group-level-credit-v5.png" alt="GRPO compares terminal rewards across a group and assigns one group-relative advantage uniformly to every token in each rollout." style="width: 100%;">
+  <figcaption><strong>Figure 1.</strong> Difference in credit assignment in PPO and GRPO : token level vs uniform. Images generated by GPT 5.6 Sol.</figcaption>
+</figure>
+
+Most state-of-the-art LLMs are now thinking models. They generate reasoning traces that can be thousands or even tens of thousands of tokens long before producing a user-facing answer or solution [[1]](#ref-1) [[9]](#ref-9). GRPO's group level advantage estimation assigns uniform credit to all such tokens. With enough rollouts and training steps (i.e. enough compute), models are able to successfully localize credit which explains the success of GRPO. One can also argue that if compute is not particularly a constraint, sampling task advantage directly is more desirable over PPO's biased value function. 
+
+Compute however is a constraint outside of frontier labs, and perhaps it should be. We would like to be able to train reasoning models in as compute-efficient a manner as possible. Algorithms that are able to perform *accurate* granular credit assignment at a similar rollout budget should intuitively be much more sample and compute efficient than GRPO. If such an algorithm scales well, then that would also be superior to group level advantage estimation at frontier scale. Granular credit assignment is also something humans naturally attempt to do, often very successfully. Therefore we should aspire to mitigate the significant shortcomings of PPO or attempt to assign token level credit in other ways.
+
+
+## On-Policy Distillation
+
+On-policy distillation offers a convenient way of assigning granular credit to rollouts *when we have a access to a much stronger model*. This has proven to be extremely useful for 
+
+Conventional sequence-level knowledge distillation trains a student on fixed teacher-generated responses. At inference time, however, the student conditions on its own earlier tokens and can enter states that were absent from the distillation data, so small mistakes compound along the sequence. On-policy distillation (OPD) addresses this exposure bias by sampling trajectories from the current student, evaluating the teacher at the resulting student-generated prefixes, and minimizing a token-level divergence between their next-token distributions [[10]](#ref-10) [[11]](#ref-11). It is therefore *on-policy with respect to the prefixes being trained on*: the student learns how the teacher would continue from states the student actually visits, receiving dense token-level supervision even when its rollout has already gone wrong.
+
+Major works in this line include:
+
+- **MiniLLM** replaces the usual forward KL with reverse KL and derives an on-policy optimization procedure that encourages the student to concentrate on the teacher's high-probability modes [[10]](#ref-10).
+- **On-Policy Distillation of Language Models** (originally introduced as Generalized Knowledge Distillation, or GKD) trains on student-generated sequences, supports general divergences and mixtures of on- and off-policy data, and can be combined with RL fine-tuning [[11]](#ref-11).
+- **DistiLLM** introduces a skew-KL objective and an adaptive off-policy replay scheme, trading strict on-policyness for substantially cheaper reuse of student generations [[12]](#ref-12).
+- **Black-Box On-Policy Distillation** introduces Generative Adversarial Distillation, replacing access to teacher logits with a discriminator trained to distinguish teacher responses from student responses [[13]](#ref-13).
+- **On-Policy Context Distillation** combines OPD with a context-conditioned teacher, allowing a student to internalize information such as accumulated experience or a system prompt from its own trajectories [[14]](#ref-14).
 
 Self Distillation has recently come up as a promising direction for language model post training [cite]. It targets two major shortcomings of dominant RL based post training algorithms like GRPO [cite]. GRPO requires a verifier signal (ex : answer correctness) which might be hard to obtain for tasks where there isnt a clear notion of correctness. GRPO also has a credit assignment problem : for positive advantages, every token in the rollout is equally upweighted. The algorithm cannot assign granular credit to parts of the rollout, unlike its predecessor PPO, which suffers from its own inefficiencies and instabilities. 
+
+<br><br><br><br><br><br><br><br>
 
 Self Distillation instead distills from the self-teacher; a privileged information (PI) conditioned student model where the PI can be the correct answer, a demonstration, environment feedback etc. This has the advantage of granular feedback : the logit level KL (or some other f-divergence) at every token position is non-uniform. Ideally (we hope) it upweights correct tokens while downweighting incorrect ones. It also does not necessarily require a verifier : the PI can be constructed from any "helpful" information. The key assumption here is that the model's own in-context learning (ICL) abilities will allow it accurately leverage PI to not only solve the problem (it can do so trivially when the PI is a demonstration), but to also accurately critique[^critique] its own rollouts. 
 
@@ -80,3 +89,12 @@ Given only the model and the environment, we only have the environment signal an
 3. <a id="ref-3"></a>Schulman, J., Wolski, F., Dhariwal, P., Radford, A., & Klimov, O. (2017). [*Proximal Policy Optimization Algorithms*](https://arxiv.org/abs/1707.06347). arXiv:1707.06347.
 4. <a id="ref-4"></a>Shao, Z., Wang, P., Zhu, Q., et al. (2024). [*DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models*](https://arxiv.org/abs/2402.03300). arXiv:2402.03300.
 5. <a id="ref-5"></a>Yuan, Y., Yue, Y., Zhu, R., Fan, T., & Yan, L. (2025). [*What's Behind PPO's Collapse in Long-CoT? Value Optimization Holds the Secret*](https://arxiv.org/abs/2503.01491). arXiv:2503.01491.
+6. <a id="ref-6"></a>Yu, Q., Zhang, Z., Zhu, R., et al. (2025). [*DAPO: An Open-Source LLM Reinforcement Learning System at Scale*](https://arxiv.org/abs/2503.14476). arXiv:2503.14476.
+7. <a id="ref-7"></a>Liu, Z., Chen, C., Li, W., et al. (2025). [*Understanding R1-Zero-Like Training: A Critical Perspective*](https://arxiv.org/abs/2503.20783). arXiv:2503.20783.
+8. <a id="ref-8"></a>Zheng, C., Liu, S., Li, M., et al. (2025). [*Group Sequence Policy Optimization*](https://arxiv.org/abs/2507.18071). arXiv:2507.18071.
+9. <a id="ref-9"></a>Kimi Team et al. (2025). [*Kimi k1.5: Scaling Reinforcement Learning with LLMs*](https://arxiv.org/abs/2501.12599). arXiv:2501.12599.
+10. <a id="ref-10"></a>Gu, Y., Dong, L., Wei, F., & Huang, M. (2024). [*MiniLLM: On-Policy Distillation of Large Language Models*](https://arxiv.org/abs/2306.08543). International Conference on Learning Representations.
+11. <a id="ref-11"></a>Agarwal, R., Vieillard, N., Zhou, Y., et al. (2024). [*On-Policy Distillation of Language Models: Learning from Self-Generated Mistakes*](https://arxiv.org/abs/2306.13649). International Conference on Learning Representations.
+12. <a id="ref-12"></a>Ko, J., Kim, S., Chen, T., & Yun, S. (2024). [*DistiLLM: Towards Streamlined Distillation for Large Language Models*](https://arxiv.org/abs/2402.03898). International Conference on Machine Learning.
+13. <a id="ref-13"></a>Ye, T., Dong, L., Chi, Z., Wu, X., Huang, S., & Wei, F. (2025). [*Black-Box On-Policy Distillation of Large Language Models*](https://arxiv.org/abs/2511.10643). arXiv:2511.10643.
+14. <a id="ref-14"></a>Ye, T., Dong, L., Wu, X., Huang, S., & Wei, F. (2026). [*On-Policy Context Distillation for Language Models*](https://arxiv.org/abs/2602.12275). arXiv:2602.12275.
