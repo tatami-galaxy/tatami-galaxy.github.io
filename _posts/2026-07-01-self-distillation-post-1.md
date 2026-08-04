@@ -38,7 +38,7 @@ Compute however is a constraint outside of frontier labs, and perhaps it should 
 
 ## On-Policy Distillation
 
-On-policy distillation offers a convenient way of assigning granular credit to rollouts *when we have a access to a much stronger model*. This has proven to be extremely useful for 
+On-policy distillation offers a convenient way of assigning granular credit to rollouts *when we have a access to a much stronger model*. This has proven to be extremely useful for distilling a large post-trained model into smaller model of the same family [cite]. The goal is obviously to do such credit assignment without first training a large model with group level advantage estimation. However its still worth studying on-policy distillation carefully as it offers 
 
 Conventional sequence-level knowledge distillation trains a student on fixed teacher-generated responses. At inference time, however, the student conditions on its own earlier tokens and can enter states that were absent from the distillation data, so small mistakes compound along the sequence. On-policy distillation (OPD) addresses this exposure bias by sampling trajectories from the current student, evaluating the teacher at the resulting student-generated prefixes, and minimizing a token-level divergence between their next-token distributions [[10]](#ref-10) [[11]](#ref-11). It is therefore *on-policy with respect to the prefixes being trained on*: the student learns how the teacher would continue from states the student actually visits, receiving dense token-level supervision even when its rollout has already gone wrong.
 
