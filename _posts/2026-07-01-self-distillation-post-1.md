@@ -34,39 +34,20 @@ Most state-of-the-art LLMs are now thinking models. They generate reasoning trac
 
 Compute however is a constraint outside of frontier labs, and perhaps it should be. We would like to be able to train reasoning models in as compute-efficient a manner as possible. Algorithms that are able to perform *accurate* granular credit assignment at a similar rollout budget should intuitively be much more sample and compute efficient than GRPO. If such an algorithm scales well, then that would also be superior to group level advantage estimation at frontier scale. Granular credit assignment is also something humans naturally attempt to do, often very successfully. Therefore we should aspire to mitigate the significant shortcomings of PPO like policy gradient methods or attempt to assign token level credit in other ways.
 
-**On-policy distillation** offers a convenient way of assigning granular credit to rollouts *when we have a access to a much stronger model* [[10]](#ref-10) [[11]](#ref-11) [[12]](#ref-12). As the name suggests, it computes the teacher's next-token distribution at every prefix of the *student's* rollouts. An *f*-divergence between the student and teacher distributions then becomes the token level supervision or 'credit'. This has proven to be extremely useful for distilling a large post-trained model into smaller model of the same family [[10]](#ref-10) [[11]](#ref-11) [[15]](#ref-15). The goal is obviously to do such credit assignment without first training a large model with group level advantage estimation. However its still worth looking into on-policy distillation carefully as it offers *a* surrogate to study and analyze how our desirable algorithm should behave. 
+**On-policy distillation** (OPD) offers a convenient way of assigning granular credit to rollouts *when we have a access to a much stronger model* [[10]](#ref-10) [[11]](#ref-11) [[12]](#ref-12). As the name suggests, it computes the teacher's next-token distribution at every prefix of the *student's* rollouts. An *f*-divergence between the student and teacher distributions then becomes the token level supervision or 'credit'. This formulation also has the advantage of not needing a verifier or a reward model and can be readily applied to non-verifiable domains, assuming the teacher has enough domain expertise. This has proven to be extremely useful for distilling a large post-trained model into smaller model of the same family [[10]](#ref-10) [[11]](#ref-11) [[15]](#ref-15). The goal is obviously to do such credit assignment without first training a large model with group level advantage estimation. However its still worth looking into OPD carefully as it offers *a* surrogate to study and analyze how our desirable algorithm should behave. 
 
 ## Self Distillation
 
-Self Distillation has recently come up as a promising direction for language model post training [cite]. It targets two major shortcomings of dominant RL based post training algorithms like GRPO [cite]. GRPO requires a verifier signal (ex : answer correctness) which might be hard to obtain for tasks where there isnt a clear notion of correctness. GRPO also has a credit assignment problem : for positive advantages, every token in the rollout is equally upweighted. The algorithm cannot assign granular credit to parts of the rollout, unlike its predecessor PPO, which suffers from its own inefficiencies and instabilities. 
+On-policy self-distillation (OPSD) builds upon OPD by attempting to construct the teacher from the student model itself [[16]](#ref-16) [[17]](#ref-17) [[20]](#ref-20) [[21]](#ref-21). The key idea is that a student might be able to critique[^critique] its own rollouts if given access to privileged information (PI) in its context; PI that enables the self-teacher to exceed the performance of the student. In addition to token level feedback, OPSD also preserves OPD's desirable property of not needing an explicit verifier.
 
-Self Distillation instead distills from the self-teacher; a privileged information (PI) conditioned student model where the PI can be the correct answer, a demonstration, environment feedback etc. This has the advantage of granular feedback : the logit level KL (or some other f-divergence) at every token position is non-uniform. Ideally (we hope) it upweights correct tokens while downweighting incorrect ones. It also does not necessarily require a verifier : the PI can be constructed from any "helpful" information. The key assumption here is that the model's own in-context learning (ICL) abilities will allow it accurately leverage PI to not only solve the problem (it can do so trivially when the PI is a demonstration), but to also accurately critique[^critique] its own rollouts. 
+Why should some choice of PI enable this self-teacher construction? This is because the student in this case is an instruction tuned LLM with in-context learning abilities (ICL) [[18]](#ref-18) [[19]](#ref-19). Having the PI in context, demonstrably increases task performance of the self-teacher beyond the student. The intuition is also quite simple. An instruction tuned LLM should be able to trivially solve a problem when the entire solution (PI) is present in its context. It only needs to have the minimal intelligence to recognize the solution and copy it. This also leads to the interesting question of how should we choose the PI. The choice of PI is crucial as we'll see but the formulation does not impose strong constraints on what the PI should be.
 
-While this works well for a range of domains, it can lead to training collapse in thinking models for reasoning tasks like math and code. It seems to stem from the fact that while the PI conditioned model can reach the correct answer, the PI in its context makes its behavior different from a strong teacher model with no PI. Concretely, the PI makes the self-teacher increasingly confident which causes it to penalizing uncertainty verbalization and exploration, essential for thinking models [cite].
+Does OPSD work? It seems to work well for a range of tasks and domains [[16]](#ref-16) [[20]](#ref-20) [[21]](#ref-21) [[22]](#ref-22). However it seems to have a particularly important and interesting failure mode which will be the subject of our discussion here. OPSD can lead to training collapse in thinking models for reasoning tasks like math and code [[23]](#ref-23) [[24]](#ref-24).
 
-In order to somewhat quantify this, lets try to analyze the behavior of the self-teacher under different PIs. Assuming our data has expert demonstrations (from a larger LLM), we will analyze three simple choices of PI : full solution, final answer, and a self generated hint from the full solution. We will also compare this with the teacher behavior in on-policy distillation from a stronger teacher. What are some useful behaviors we can analyze? 
-
-- Number of generated tokens
-- Uncertainty verbalization
-- Credit assignment
-- Backtracking, verification, backward-chaining, subgoal setting
-- Underthinking
+It seems that while the self-teacher can produce the correct solution (trivially if the PI *is* the solution), the PI makes the self-teacher increasingly confident, causing it to penalize the student's exploration, essential for thinking models [[23]](#ref-23) [[24]](#ref-24).
 
 
-Now lets step back and think about what we want self-distillation to do. Here we will only think about intuitions and leave rigorous arguments for later. We want several things : 
-
-- Granular credit assignment
-- Low bias
-- On-policy training
-
-We can always ensure on-policyness by only training on student generated trajectories. Its the other two properties that are harder to satisfy *together*. To ensure low bias we want to rely as much as possible on verifier signal. If we restrict ourselves to verifiable domains (math, code) for now, we have access to this in the form of the final answer or compiler output. GRPO fully relies on the verifier and foregoes credit assignment altogether which leads to the sample inefficiency of GRPO, especially for long horizon tasks. Intuitively, **we want to leverage the model's ICL to distribute the verifier signal at the end, across the trajectory**. This is what naive self-distillation attempts to do but simply adding the signal to the self-teacher context as PI. 
-
-Given only the model and the environment, we only have the environment signal and the model's ICL. There's no other source of information we have access to. As long as we rely on ICL, we will be adding *some* bias since we are relying on the model's own interpretation of the verifier signal. But perhaps we can control that in a principled way with our formulation. 
-
-
-
-
-[^critique]: The self-teacher is trying to solve the problem from each student rollout token position. Given this objective, its next-token distribution over that token position is the "critique" of that token.
+[^critique]: The self-teacher is trying to solve the problem from each student prefix. Given this objective, its next-token distribution over that token position is the 'critique' of that token.
 
 ## References
 
@@ -85,3 +66,12 @@ Given only the model and the environment, we only have the environment signal an
 13. <a id="ref-13"></a>Ye, T., Dong, L., Chi, Z., Wu, X., Huang, S., & Wei, F. (2025). [*Black-Box On-Policy Distillation of Large Language Models*](https://arxiv.org/abs/2511.10643). arXiv:2511.10643.
 14. <a id="ref-14"></a>Ye, T., Dong, L., Wu, X., Huang, S., & Wei, F. (2026). [*On-Policy Context Distillation for Language Models*](https://arxiv.org/abs/2602.12275). arXiv:2602.12275.
 15. <a id="ref-15"></a>Yang, W., Liu, W., Xie, R., Yang, K., Yang, S., & Lin, Y. (2026). [*Learning beyond Teacher: Generalized On-Policy Distillation with Reward Extrapolation*](https://arxiv.org/abs/2602.12125). arXiv:2602.12125.
+16. <a id="ref-16"></a>Zhao, S., Xie, Z., Liu, M., et al. (2026). [*Self-Distilled Reasoner: On-Policy Self-Distillation for Large Language Models*](https://arxiv.org/abs/2601.18734). arXiv:2601.18734.
+17. <a id="ref-17"></a>Penaloza, E., Vattikonda, D., Gontier, N., et al. (2026). [*Privileged Information Distillation for Language Models*](https://arxiv.org/abs/2602.04942). arXiv:2602.04942.
+18. <a id="ref-18"></a>Brown, T. B., Mann, B., Ryder, N., et al. (2020). [*Language Models are Few-Shot Learners*](https://arxiv.org/abs/2005.14165). Advances in Neural Information Processing Systems, 33.
+19. <a id="ref-19"></a>Min, S., Lyu, X., Holtzman, A., et al. (2022). [*Rethinking the Role of Demonstrations: What Makes In-Context Learning Work?*](https://arxiv.org/abs/2202.12837). Conference on Empirical Methods in Natural Language Processing.
+20. <a id="ref-20"></a>Hübotter, J., Lübeck, F., Behric, L., et al. (2026). [*Reinforcement Learning via Self-Distillation*](https://arxiv.org/abs/2601.20802). arXiv:2601.20802.
+21. <a id="ref-21"></a>Shenfeld, I., Damani, M., Hübotter, J., & Agrawal, P. (2026). [*Self-Distillation Enables Continual Learning*](https://arxiv.org/abs/2601.19897). arXiv:2601.19897.
+22. <a id="ref-22"></a>Rezaei, M., Mahmoud, A., Wang, Z., et al. (2026). [*Rubric-Guided Self-Distillation: Post-Training Without Rubric Verifiers*](https://arxiv.org/abs/2606.12507). arXiv:2606.12507.
+23. <a id="ref-23"></a>Kaur, S., Ri, N., He, Y., Fowl, L., & Arora, S. (2026). [*Rethinking On-Policy Self-Distillation for Thinking Models*](https://arxiv.org/abs/2607.05184). arXiv:2607.05184.
+24. <a id="ref-24"></a>Peng, K., Li, C., Ouyang, Y., Yuan, Y., & Ding, L. (2026). [*Diagnosing and Mitigating Thinking Collapse in On-Policy Self-Distillation*](https://arxiv.org/abs/2607.10805). arXiv:2607.10805.
