@@ -10,6 +10,7 @@ Policy gradient based post-training has become an important driver of rapidly im
 
 $$
 \hat{A}_i = \frac{r_i-\operatorname{mean}(r_1,\ldots,r_G)}{\operatorname{std}(r_1,\ldots,r_G)},
+\tag{1}
 $$
 
 GRPO uses a PPO style clipped objective function with a KL anchor on the reference policy. More recent GRPO variants have done away with the KL term [[6]](#ref-6). Ignoring the clipping and KL penalty, the policy-gradient term has the same well known policy gradient form : 
@@ -19,6 +20,7 @@ $$
 \approx \mathbb{E}\!\left[\frac{1}{G}\sum_{i=1}^{G}\frac{1}{T_i}\sum_{t=1}^{T_i}
 \rho_{i,t}(\theta)\hat{A}_i\nabla_\theta
 \log \pi_\theta(o_{i,t}\mid q,o_{i,<t})\right].
+\tag{2}
 $$
 
 where $$\rho_{i,t}(\theta)=\frac{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}{\pi_{\theta_{\mathrm{old}}}(o_{i,t}\mid q,o_{i,<t})}$$ is the importance sampling ratio (useful even in a purely on-policy setting).
@@ -36,18 +38,50 @@ Compute however is a constraint outside of frontier labs, and perhaps it should 
 
 **On-policy distillation** (OPD) offers a convenient way of assigning granular credit to rollouts *when we have a access to a much stronger model* [[10]](#ref-10) [[11]](#ref-11) [[12]](#ref-12). As the name suggests, it computes the teacher's next-token distribution at every prefix of the *student's* rollouts. An *f*-divergence between the student and teacher distributions then becomes the token level supervision or 'credit'. This formulation also has the advantage of not needing a verifier or a reward model and can be readily applied to non-verifiable domains, assuming the teacher has enough domain expertise. This has proven to be extremely useful for distilling a large post-trained model into smaller model of the same family [[10]](#ref-10) [[11]](#ref-11) [[15]](#ref-15). The goal is obviously to do such credit assignment without first training a large model with group level advantage estimation. However its still worth looking into OPD carefully as it offers *a* surrogate to study and analyze how our desirable algorithm should behave. 
 
-## Self Distillation
+## What is self-distillation
 
-On-policy self-distillation (OPSD) builds upon OPD by attempting to construct the teacher from the student model itself [[16]](#ref-16) [[17]](#ref-17) [[20]](#ref-20) [[21]](#ref-21). The key idea is that a student might be able to critique[^critique] its own rollouts if given access to privileged information (PI) in its context; PI that enables the self-teacher to exceed the performance of the student. In addition to token level feedback, OPSD also preserves OPD's desirable property of not needing an explicit verifier.
+On-policy self-distillation (OPSD) builds upon OPD by attempting to construct the teacher from the student model itself [[16]](#ref-16) [[17]](#ref-17) [[20]](#ref-20) [[21]](#ref-21). The key idea is that a student might be able to critique[^critique] its own rollouts if given access to privileged information (PI) in its context; PI that enables the self-teacher to exceed the performance of the student. In addition to token level feedback, OPSD also preserves OPD's desirable property of not needing an explicit verifier. The objective can be written as :
 
-Why should some choice of PI enable this self-teacher construction? This is because the student in this case is an instruction tuned LLM with in-context learning abilities (ICL) [[18]](#ref-18) [[19]](#ref-19). Having the PI in context, demonstrably increases task performance of the self-teacher beyond the student. The intuition is also quite simple. An instruction tuned LLM should be able to trivially solve a problem when the entire solution (PI) is present in its context. It only needs to have the minimal intelligence to recognize the solution and copy it. This also leads to the interesting question of how should we choose the PI. The choice of PI is crucial as we'll see but the formulation does not impose strong constraints on what the PI should be.
+$$
+\mathcal{L}(\theta)=D_{\mathrm{KL}}\!\left(\pi_\theta(\cdot\mid q)\,\|\,\pi(\cdot\mid q,c)\right)
+=\mathbb{E}_{o\sim\pi_\theta(\cdot\mid q)}\!\left[\log\frac{\pi_\theta(o\mid q)}{\pi(o\mid q,c)}\right],
+\tag{3}
+$$
 
-Does OPSD work? It seems to work well for a range of tasks and domains [[16]](#ref-16) [[20]](#ref-20) [[21]](#ref-21) [[22]](#ref-22). However it seems to have a particularly important and interesting failure mode which will be the subject of our discussion here. OPSD can lead to training collapse in thinking models for reasoning tasks like math and code [[23]](#ref-23) [[24]](#ref-24).
+where $$c$$ is the PI. The teacher can be frozen or an exponential moving average of the student Differentiating this w.r.t $$\theta$$ again results in the familiar policy gradient expression : 
 
-It seems that while the self-teacher can produce the correct solution (trivially if the PI *is* the solution), the PI makes the self-teacher increasingly confident, causing it to penalize the student's exploration, essential for thinking models [[23]](#ref-23) [[24]](#ref-24).
+$$
+\nabla_\theta \mathcal{L}(\theta)=\mathbb{E}_{o\sim\pi_\theta}\!\left[\sum_{t=1}^{T}
+\log\frac{\pi_\theta(o_t\mid q,o_{<t})}{\pi(o_t\mid q,c,o_{<t})}\,
+\nabla_\theta\log\pi_\theta(o_t\mid q,o_{<t})\right].
+\tag{4}
+$$
+
+Comparing equations (2) and (4) allows us to write out the OPSD advantage : 
+
+$$
+\hat{A}_t = \log\frac{\pi(o_t\mid q,c,o_{<t})}{\pi_\theta(o_t\mid q,o_{<t})},
+\tag{5}
+$$
+
+The OPSD objective is minimized whereas the GRPO objective is maximized (expected sum of rewards). Therefore the advantage sign needs to be flipped which is the same as flipping the ratio. Since the advantage is *per token* it also has a $$t$$ subscript, unlike the GRPO advantage.
+
+
+Why should some choice of PI enable this self-teacher construction? This is because the student in this case is an instruction tuned LLM with in-context learning abilities (ICL) [[18]](#ref-18) [[19]](#ref-19). Having the PI in context, demonstrably increases task performance of the self-teacher beyond the student [[21]](#ref-21). Its easy to be convinced by this. For example, an instruction tuned LLM should be able to trivially solve a problem when the entire solution (PI) is present in its context. It only needs to have the minimal intelligence to recognize the solution and copy it. This also leads to the interesting question of how should we choose the PI. The choice of PI is crucial as we'll see but the formulation does not impose strong constraints on what the PI should be.
+
+## Analyzing self-distillation
+
+Does OPSD work? It seems to work well for a range of tasks and domains [[16]](#ref-16) [[20]](#ref-20) [[21]](#ref-21) [[22]](#ref-22). However it seems to have a particularly important and interesting failure mode which will be the subject of our discussion here. OPSD can lead to training collapse in thinking models for reasoning tasks like math [[23]](#ref-23) [[24]](#ref-24) [[25]](#ref-25). It seems that while the self-teacher can produce the correct solution (trivially if the PI *is* the solution), the PI makes the self-teacher increasingly confident, causing it to penalize the student's exploration, essential for thinking models [[23]](#ref-23) [[24]](#ref-24) [[25]](#ref-25). 
+
+Its hard to precisely define exploration but in our context it refers to the model exploring different strategies or related concepts, expressing uncertainty, backtracking and correcting itself before committing to a final solution. Kim et. al [[25]](#ref-25) report that the self-teacher generates fewer expressions of uncertainty ('wait', 'hmm', 'perhaps', etc) as the PI becomes more informative.  
+
+[entropy]
+[illustrations]
 
 
 [^critique]: The self-teacher is trying to solve the problem from each student prefix. Given this objective, its next-token distribution over that token position is the 'critique' of that token.
+
+
 
 ## References
 
@@ -75,3 +109,4 @@ It seems that while the self-teacher can produce the correct solution (trivially
 22. <a id="ref-22"></a>Rezaei, M., Mahmoud, A., Wang, Z., et al. (2026). [*Rubric-Guided Self-Distillation: Post-Training Without Rubric Verifiers*](https://arxiv.org/abs/2606.12507). arXiv:2606.12507.
 23. <a id="ref-23"></a>Kaur, S., Ri, N., He, Y., Fowl, L., & Arora, S. (2026). [*Rethinking On-Policy Self-Distillation for Thinking Models*](https://arxiv.org/abs/2607.05184). arXiv:2607.05184.
 24. <a id="ref-24"></a>Peng, K., Li, C., Ouyang, Y., Yuan, Y., & Ding, L. (2026). [*Diagnosing and Mitigating Thinking Collapse in On-Policy Self-Distillation*](https://arxiv.org/abs/2607.10805). arXiv:2607.10805.
+25. <a id="ref-25"></a>Kim, J., Luo, X., Kim, M., et al. (2026). [*Why Does Self-Distillation (Sometimes) Degrade the Reasoning Capability of LLMs?*](https://arxiv.org/abs/2603.24472). arXiv:2603.24472.
