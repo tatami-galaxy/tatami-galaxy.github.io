@@ -77,7 +77,7 @@ Its hard to precisely define exploration of an LLM's chain-of-thought (COT) but 
 
 <figure>
   <img src="/images/pi_uncertainty_tradeoff_linear.png" alt="Plot of pass@8 accuracy against mean chain-of-thought epistemic marker count for Qwen3-1.7B and Qwen3-4B on DeepMath, under five privileged information conditions: none, hint, answer, rollout and full." style="max-width: 100%; height: auto; margin-left: auto; margin-right: auto;">
-  <figcaption style="width: 100%;"><strong>Figure 2.</strong> Verbalized uncertainty against pass@8 accuracy for Qwen3-1.7B and Qwen3-4B on 128 DeepMath problems [^num-problems] under different PIs -> none: no PI, answer: the correct final answer, hint: a self generated hint from a correct demonstration, full: a full demonstration, rollout: a self generated rollout which may be correct or incorrect</figcaption>
+  <figcaption style="width: 100%;" markdown="span"><strong>Figure 2.</strong> Verbalized uncertainty against pass@8 accuracy for Qwen3-1.7B and Qwen3-4B on 128 DeepMath problems[^dropped-problem] under different PIs -> none: no PI, answer: the correct final answer, hint: a self generated hint from a correct demonstration, full: a full demonstration, rollout: a self generated rollout which may be correct or incorrect</figcaption>
 </figure>
 
 
@@ -87,7 +87,7 @@ Its hard to precisely define exploration of an LLM's chain-of-thought (COT) but 
 
 [^why-training]: We primarily care about how the self-teacher behaves on training data. The self-teacher is absent at test-time.
 
-[^num-problems]: 1 problem is dropped for Qwen3-4B because the full PI exceeds 8192 max tokens.
+[^dropped-problem]: 1 problem is dropped for Qwen3-4B because the full PI exceeds 8192 max tokens.
 
 
 
