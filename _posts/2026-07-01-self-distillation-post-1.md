@@ -80,7 +80,7 @@ Its hard to precisely define exploration of an LLM's chain-of-thought (COT) but 
   <figcaption style="width: 100%;" markdown="span"><strong>Figure 2.</strong> Verbalized uncertainty against pass@8 accuracy for Qwen3-1.7B and Qwen3-4B on 128 DeepMath problems[^dropped-problem] under different PIs -> none: no PI, hint: a self generated hint from a correct demonstration, answer: the correct final answer, rollout: a self generated rollout which may be correct or incorrect, full: a full demonstration. </figcaption>
 </figure>
 
-Both thinking models exhibit above 80% pass@8 accuracy with over 70 epistemic tokens on average in the think traces. 
+Both thinking models exhibit above 80% pass@8 accuracy with over 70 epistemic tokens on average in the think traces. As we make the PI progressively more informative about the problem, uncertainty verbalization decreases with overall increase in pass@8 accuracy. 
 
 
 
