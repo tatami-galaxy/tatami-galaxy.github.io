@@ -77,10 +77,10 @@ Its hard to precisely define exploration of an LLM's chain-of-thought (COT) but 
 
 <figure>
   <img src="/images/pi_uncertainty_vs_passk.png" alt="Plot of pass@8 accuracy against mean chain-of-thought epistemic marker count for Qwen3-1.7B and Qwen3-4B on DeepMath, under five privileged information conditions: none, hint, answer, rollout and full." style="max-width: 100%; height: auto; margin-left: auto; margin-right: auto;">
-  <figcaption style="width: 100%;" markdown="span"><strong>Figure 2.</strong> Verbalized uncertainty against pass@8 accuracy for Qwen3-1.7B and Qwen3-4B on 128 DeepMath problems[^dropped-problem] under different PIs -> none: no PI, hint: a self generated hint from a correct demonstration, answer: the correct final answer, rollout: a self generated rollout which may be correct or incorrect, full: a full demonstration. </figcaption>
+  <figcaption style="width: 100%;" markdown="span"><strong>Figure 2.</strong> Verbalized uncertainty against pass@8 accuracy for Qwen3-1.7B and Qwen3-4B on 128 DeepMath problems[^dropped-problem] under different PIs -> none: no PI, hint: a self generated hint from a correct demonstration, answer: the correct final answer, rollout: a self generated rollout which may be correct or incorrect, full: a full demonstration. Epistemic marker set is same as Kim et. al [[25]](#ref-25) </figcaption>
 </figure>
 
-Both thinking models exhibit above 80% pass@8 accuracy with over 70 epistemic tokens on average in the think traces. As we make the PI progressively more informative about the problem, uncertainty verbalization decreases with overall increase in pass@8 accuracy. 
+With no PI, both thinking models exhibit above 80% pass@8 accuracy with over 70 epistemic tokens on average in the think traces. As we make the PI progressively more informative about the problem, uncertainty verbalization decreases in the self-teacher with overall increase in pass@8 accuracy. 
 
 
 
@@ -109,8 +109,6 @@ Both thinking models exhibit above 80% pass@8 accuracy with over 70 epistemic to
 10. <a id="ref-10"></a>Gu, Y., Dong, L., Wei, F., & Huang, M. (2024). [*MiniLLM: On-Policy Distillation of Large Language Models*](https://arxiv.org/abs/2306.08543). International Conference on Learning Representations.
 11. <a id="ref-11"></a>Agarwal, R., Vieillard, N., Zhou, Y., et al. (2024). [*On-Policy Distillation of Language Models: Learning from Self-Generated Mistakes*](https://arxiv.org/abs/2306.13649). International Conference on Learning Representations.
 12. <a id="ref-12"></a>Ko, J., Kim, S., Chen, T., & Yun, S. (2024). [*DistiLLM: Towards Streamlined Distillation for Large Language Models*](https://arxiv.org/abs/2402.03898). International Conference on Machine Learning.
-13. <a id="ref-13"></a>Ye, T., Dong, L., Chi, Z., Wu, X., Huang, S., & Wei, F. (2025). [*Black-Box On-Policy Distillation of Large Language Models*](https://arxiv.org/abs/2511.10643). arXiv:2511.10643.
-14. <a id="ref-14"></a>Ye, T., Dong, L., Wu, X., Huang, S., & Wei, F. (2026). [*On-Policy Context Distillation for Language Models*](https://arxiv.org/abs/2602.12275). arXiv:2602.12275.
 15. <a id="ref-15"></a>Yang, W., Liu, W., Xie, R., Yang, K., Yang, S., & Lin, Y. (2026). [*Learning beyond Teacher: Generalized On-Policy Distillation with Reward Extrapolation*](https://arxiv.org/abs/2602.12125). arXiv:2602.12125.
 16. <a id="ref-16"></a>Zhao, S., Xie, Z., Liu, M., et al. (2026). [*Self-Distilled Reasoner: On-Policy Self-Distillation for Large Language Models*](https://arxiv.org/abs/2601.18734). arXiv:2601.18734.
 17. <a id="ref-17"></a>Penaloza, E., Vattikonda, D., Gontier, N., et al. (2026). [*Privileged Information Distillation for Language Models*](https://arxiv.org/abs/2602.04942). arXiv:2602.04942.
