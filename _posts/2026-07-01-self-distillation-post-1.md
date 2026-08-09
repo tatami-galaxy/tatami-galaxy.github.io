@@ -28,7 +28,9 @@ where $$\rho_{i,t}(\theta)=\frac{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}{\pi_{\theta
 GRPO has proved to be quite successful for post-training LLMs in verifiable domains [[1]](#ref-1) [[4]](#ref-4). Over the last couple of years it has spawned numerous variants that tackle its different amendable shortcomings [[6]](#ref-6) [[7]](#ref-7) [[8]](#ref-8). *Halving* the memory overhead and alleviating training instabilities of PPO, that become more and more acute at frontier scale, is naturally quite appealing. GRPO however is fundamentally incapable of a particularly desirable attribute of PPO : granular credit assignment per rollout.
 
 <figure>
+  <a href="/images/ppo-grpo-credit.svg" title="Open full size">
   <img src="/images/ppo-grpo-credit.svg" alt="Comparison of PPO token-level credit assignment using a value function and GAE with GRPO's uniform group-relative credit assignment." style="width: auto; height: auto; margin-left: auto; margin-right: auto;">
+  </a>
   <figcaption style="width: 100%;"><strong>Figure 1.</strong> Difference in credit assignment in PPO and GRPO : token level vs uniform.</figcaption>
 </figure>
 
@@ -76,15 +78,19 @@ Does OPSD work? It seems to work well for a range of tasks and domains [[14]](#r
 Its hard to precisely define exploration of an LLM's chain-of-thought (COT) but in our context it loosely refers to the model exploring different strategies or related concepts, expressing uncertainty, backtracking and correcting itself before committing to a final solution. Kim et. al [[23]](#ref-23) report that the self-teacher generates fewer expressions of uncertainty ('wait', 'hmm', 'perhaps', etc) as the PI becomes more informative. To replicate this finding we take the Qwen3-1.7B and the Qwen3-4B models [[25]](#ref-25) and evaluate their uncertainty verbalization and pass@k metrics under different PIs on the Deepmath [[24]](#ref-24) training dataset [^why-training] : 
 
 <figure>
+  <a href="/images/pi_uncertainty_vs_passk_8k.png" title="Open full size" style="width: 100%;">
   <img src="/images/pi_uncertainty_vs_passk_8k.png" alt="Plot of pass@8 accuracy against mean chain-of-thought epistemic marker count for Qwen3-1.7B and Qwen3-4B on DeepMath at 8192 max tokens, under five privileged information conditions: none, hint, answer, rollout and full.">
+  </a>
+  <a href="/images/pi_uncertainty_vs_passk_16k.png" title="Open full size" style="width: 100%;">
   <img src="/images/pi_uncertainty_vs_passk_16k.png" alt="The same plot at 16384 max tokens.">
+  </a>
   <figcaption style="width: 100%;" markdown="span"><strong>Figure 2.</strong> Verbalized uncertainty against pass@8 accuracy for Qwen3-1.7B and Qwen3-4B on 128 DeepMath problems[^dropped-problem] under different PIs -> none: no PI, hint: a self generated hint from a correct demonstration, answer: the correct final answer, rollout: a self generated rollout which may be correct or incorrect, full: a full demonstration. Epistemic marker set is same as Kim et. al [[23]](#ref-23) </figcaption>
 </figure>
 
 As we make the PI progressively more informative about the problem, uncertainty verbalization decreases as expected. Its somewhat interesting what happens when we use an *unverified* rollout as PI. Its simply a self-generated rollout for the same prompt which may or may not be the correct solution. Lets measure how it affects pass@k at different rollout lengths when the rollout is correct vs when it is incorrect : 
 
-<figure style="width: min(98vw, 1900px); max-width: none; margin-left: calc(50% - min(49vw, 950px));">
-  <a href="/images/rollout_pi_stratified.png" title="Open full size">
+<figure>
+  <a href="/images/rollout_pi_stratified.png" title="Open full size" style="width: 100%;">
   <img src="/images/rollout_pi_stratified.png" alt="Four panel arrow plot showing accuracy with no PI versus with a rollout PI for Qwen3-1.7B and Qwen3-4B, stratified by whether the rollout PI was correct or incorrect, for pass@1 and pass@8 at 8k and 16k token budgets, with deltas and 95% confidence intervals.">
   </a>
   <figcaption style="width: 100%;" markdown="span"><strong>Figure 3.</strong> Effect of an unverified rollout PI, stratified by whether that rollout happens to be correct or incorrect. Open circle : no PI, arrowhead : rollout PI, with the change and its 95% CI on the right. Panels show pass@1 and pass@8 at the 8k and 16k token budgets. Group sizes are given as Qwen3-1.7B / Qwen3-4B.</figcaption>
