@@ -81,12 +81,15 @@ Its hard to precisely define exploration of an LLM's chain-of-thought (COT) but 
   <figcaption style="width: 100%;" markdown="span"><strong>Figure 2.</strong> Verbalized uncertainty against pass@8 accuracy for Qwen3-1.7B and Qwen3-4B on 128 DeepMath problems[^dropped-problem] under different PIs -> none: no PI, hint: a self generated hint from a correct demonstration, answer: the correct final answer, rollout: a self generated rollout which may be correct or incorrect, full: a full demonstration. Epistemic marker set is same as Kim et. al [[23]](#ref-23) </figcaption>
 </figure>
 
-As we make the PI progressively more informative about the problem, uncertainty verbalization decreases as expected. Its somewhat interesting what happens when we use an *unverified* rollout as PI. Its simply a self-generated rollout for the same prompt which may or may not be the correct solution. 
+As we make the PI progressively more informative about the problem, uncertainty verbalization decreases as expected. Its somewhat interesting what happens when we use an *unverified* rollout as PI. Its simply a self-generated rollout for the same prompt which may or may not be the correct solution. Lets measure how it affects pass@k at different rollout lengths when the rollout is correct vs when it is incorrect : 
+
+<figure>
+  <img src="/images/rollout_pi_stratified.png" alt="Four panel arrow plot showing accuracy with no PI versus with a rollout PI for Qwen3-1.7B and Qwen3-4B, stratified by whether the rollout PI was correct or incorrect, for pass@1 and pass@8 at 8k and 16k token budgets, with deltas and 95% confidence intervals.">
+  <figcaption style="width: 100%;" markdown="span"><strong>Figure 3.</strong> Effect of an unverified rollout PI, stratified by whether that rollout happens to be correct or incorrect. Open circle : no PI, arrowhead : rollout PI, with the change and its 95% CI on the right. Panels show pass@1 and pass@8 at the 8k and 16k token budgets. Group sizes are given as Qwen3-1.7B / Qwen3-4B.</figcaption>
+</figure>
 
 
 
-
-What happens when we distill from these self-teachers?
 
 
 
