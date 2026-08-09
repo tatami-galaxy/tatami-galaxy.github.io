@@ -73,14 +73,20 @@ Why should some choice of PI enable this self-teacher construction? This is beca
 
 Does OPSD work? It seems to work well for a range of tasks and domains [[14]](#ref-14) [[18]](#ref-18) [[19]](#ref-19) [[20]](#ref-20). However it seems to have a particularly important and interesting failure mode which will be the subject of our discussion here. OPSD can lead to training collapse in thinking models for reasoning tasks like math [[21]](#ref-21) [[22]](#ref-22) [[23]](#ref-23). It seems that while the self-teacher can produce the correct solution (trivially, if the PI *is* the solution), the PI makes the self-teacher increasingly confident, causing it to penalize the student's exploration, essential for thinking models [[21]](#ref-21) [[22]](#ref-22) [[23]](#ref-23). 
 
-Its hard to precisely define exploration of an LLM's chain-of-thought (COT) but in our context it loosely refers to the model exploring different strategies or related concepts, expressing uncertainty, backtracking and correcting itself before committing to a final solution. Kim et. al [[23]](#ref-23) report that the self-teacher generates fewer expressions of uncertainty ('wait', 'hmm', 'perhaps', etc) as the PI becomes more informative. To replicate this finding we take the Qwen3-1.7B and the Qwen3-4B models [[25]](#ref-25) and evaluate their uncertainty verbalization and pass@k metrics under different PIs, on the Deepmath [[24]](#ref-24) training dataset [^why-training] : 
+Its hard to precisely define exploration of an LLM's chain-of-thought (COT) but in our context it loosely refers to the model exploring different strategies or related concepts, expressing uncertainty, backtracking and correcting itself before committing to a final solution. Kim et. al [[23]](#ref-23) report that the self-teacher generates fewer expressions of uncertainty ('wait', 'hmm', 'perhaps', etc) as the PI becomes more informative. To replicate this finding we take the Qwen3-1.7B and the Qwen3-4B models [[25]](#ref-25) and evaluate their uncertainty verbalization and pass@k metrics under different PIs on the Deepmath [[24]](#ref-24) training dataset [^why-training] : 
 
-<figure>
-  <img src="/images/pi_uncertainty_vs_passk.png" alt="Plot of pass@8 accuracy against mean chain-of-thought epistemic marker count for Qwen3-1.7B and Qwen3-4B on DeepMath, under five privileged information conditions: none, hint, answer, rollout and full." style="max-width: 100%; height: auto; margin-left: auto; margin-right: auto;">
+<figure class="half">
+  <img src="/images/pi_uncertainty_vs_passk_8k.png" alt="Plot of pass@8 accuracy against mean chain-of-thought epistemic marker count for Qwen3-1.7B and Qwen3-4B on DeepMath at 8192 max tokens, under five privileged information conditions: none, hint, answer, rollout and full.">
+  <img src="/images/pi_uncertainty_vs_passk_16k.png" alt="The same plot at 16384 max tokens.">
   <figcaption style="width: 100%;" markdown="span"><strong>Figure 2.</strong> Verbalized uncertainty against pass@8 accuracy for Qwen3-1.7B and Qwen3-4B on 128 DeepMath problems[^dropped-problem] under different PIs -> none: no PI, hint: a self generated hint from a correct demonstration, answer: the correct final answer, rollout: a self generated rollout which may be correct or incorrect, full: a full demonstration. Epistemic marker set is same as Kim et. al [[23]](#ref-23) </figcaption>
 </figure>
 
-With no PI, both thinking models exhibit above 80% pass@8 accuracy with over 70 epistemic tokens on average in the think traces. As we make the PI progressively more informative about the problem, uncertainty verbalization decreases in the self-teacher with overall increase in pass@8 accuracy. 
+As we make the PI progressively more informative about the problem, uncertainty verbalization decreases as expected. Its somewhat interesting what happens when we use an *unverified* rollout as PI. Its simply a self-generated rollout for the same prompt which may or may not be the correct solution. 
+
+
+
+
+What happens when we distill from these self-teachers?
 
 
 
@@ -89,7 +95,7 @@ With no PI, both thinking models exhibit above 80% pass@8 accuracy with over 70 
 
 [^why-training]: We primarily care about how the self-teacher behaves on training data. The self-teacher is absent at test-time.
 
-[^dropped-problem]: 1 problem is dropped for Qwen3-4B because the full PI exceeds 8192 max tokens.
+[^dropped-problem]: 1 problem is dropped for Qwen3-4B because the full PI exceeds max model len.
 
 
 
