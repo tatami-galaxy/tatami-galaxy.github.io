@@ -128,17 +128,19 @@ Our experiments so far suggest a few things which we list below. Note that we ha
 
 **1. The PI needs to be correct and minimally informative about the reasoning process :** 
 
-  - An incorrect PI strongly degrades the self-teacher accuracy.
-  - Only the hint conditioned self-teacher consistently lifts student pass@k above baseline.
-  - Even an incorrect PI in context can boost self-teacher accuracy if the PI is truncated before reaching the (incorrect) final answer.
+  - An incorrect PI strongly degrades the self-teacher accuracy
+  - Only the hint conditioned self-teacher consistently lifts student pass@k above baseline
+  - Even an incorrect PI in context can boost self-teacher accuracy if the PI is truncated before reaching the (incorrect) final answer
 
 **2. The self-teacher needs to preserve uncertainty verbalization :**
   - A more informative PI tends to reduce uncertainty verbalization in the self-teacher.
-  - Distilling from highly confident teachers is detrimental.
+  - Distilling from highly confident (in terms of verbalization) teachers is detrimental
 
 **3. The PI distribution should be close to the student distribution :**
 
-  - Even unverified but self-generated rollouts as PI is less destructive to the student compared to correct full solution PIs from a stronger but different model. 
+  - Even unverified but self-generated rollouts as PI is less destructive to the student compared to correct full solution PIs from a stronger but different model 
+
+Claim 3 is the strongest claim here and so let us see if we can say more about this. Nicolicioiu et al. [[27]](#ref-27) argue that : "*A teacher may struggle to effectively guide a correct but less typical rollout when conditioned on a more standard or canonical demonstration, simply because the two trajectories share fewer common patterns. As a result, distinctive yet valid solution strategies receive weaker learning signals.*"
 
 
 
@@ -184,3 +186,4 @@ Our experiments so far suggest a few things which we list below. Note that we ha
 24. <a id="ref-24"></a>He, Z., Liang, T., Xu, J., et al. (2025). [*DeepMath-103K: A Large-Scale, Challenging, Decontaminated, and Verifiable Mathematical Dataset for Advancing Reasoning*](https://arxiv.org/abs/2504.11456). arXiv:2504.11456.
 25. <a id="ref-25"></a>Yang, A., Li, A., Yang, B., et al. (2025). [*Qwen3 Technical Report*](https://arxiv.org/abs/2505.09388). arXiv:2505.09388.
 26. <a id="ref-26"></a>Hugging Face H4 (2024). [*AIME 2024*](https://huggingface.co/datasets/HuggingFaceH4/aime_2024). Hugging Face Datasets. The 30 problems of AIME 2024 I and II, derived from [AI-MO/aimo-validation-aime](https://huggingface.co/datasets/AI-MO/aimo-validation-aime).
+27. <a id="ref-27"></a>Nicolicioiu, A. L., Pezeshki, M., & Courville, A. (2026). [*On-Policy Self-Distillation with Sampled Demonstrations Reduces Output Diversity*](https://arxiv.org/abs/2606.26091). arXiv:2606.26091.
