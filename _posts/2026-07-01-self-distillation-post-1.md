@@ -27,7 +27,7 @@ where $$\rho_{i,t}(\theta)=\frac{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}{\pi_{\theta
 
 GRPO has proved to be quite successful for post-training LLMs in verifiable domains [[1]](#ref-1) [[4]](#ref-4). Over the last couple of years it has spawned numerous variants that tackle its different amendable shortcomings [[6]](#ref-6) [[7]](#ref-7) [[8]](#ref-8). *Halving* the memory overhead and alleviating training instabilities of PPO, that become more and more acute at frontier scale, is naturally quite appealing. GRPO however is fundamentally incapable of a particularly desirable attribute of PPO : granular credit assignment per rollout.
 
-<figure>
+<figure id="fig-1">
   <a href="/images/ppo-grpo-credit.svg" title="Open full size">
   <img src="/images/ppo-grpo-credit.svg" alt="Comparison of PPO token-level credit assignment using a value function and GAE with GRPO's uniform group-relative credit assignment." style="width: auto; height: auto; margin-left: auto; margin-right: auto;">
   </a>
@@ -77,7 +77,7 @@ Does OPSD work? It seems to work well for a range of tasks and domains [[14]](#r
 
 Its hard to precisely define exploration of an LLM's chain-of-thought (COT) but in our context it loosely refers to the model exploring different strategies or related concepts, expressing uncertainty, backtracking and correcting itself before committing to a final solution. Kim et. al [[23]](#ref-23) report that the self-teacher generates fewer expressions of uncertainty ('wait', 'hmm', 'perhaps', etc) as the PI becomes more informative. To replicate this finding we take the Qwen3-1.7B and the Qwen3-4B models [[25]](#ref-25) and evaluate their uncertainty verbalization and pass@k metrics under different PIs on the Deepmath [[24]](#ref-24) training dataset [^why-training] : 
 
-<figure>
+<figure id="fig-2">
   <a href="/images/pi_uncertainty_vs_passk_8k.png" title="Open full size" style="width: 100%;">
   <img src="/images/pi_uncertainty_vs_passk_8k.png" alt="Plot of pass@8 accuracy against mean chain-of-thought epistemic marker count for Qwen3-1.7B and Qwen3-4B on DeepMath at 8192 max tokens, under five privileged information conditions: none, hint, answer, rollout and full.">
   </a>
@@ -89,16 +89,25 @@ Its hard to precisely define exploration of an LLM's chain-of-thought (COT) but 
 
 As we make the PI progressively more informative about the problem, uncertainty verbalization decreases as expected. Its somewhat interesting what happens when we use an *unverified* rollout as PI. Its simply a self-generated rollout for the same prompt which may or may not be the correct solution. Lets measure how it affects pass@k at different token budgets when the rollout is correct vs when it is incorrect : 
 
-<figure>
+<figure id="fig-3">
   <a href="/images/rollout_pi_stratified.png" title="Open full size" style="width: 100%;">
   <img src="/images/rollout_pi_stratified.png" alt="Four panel arrow plot showing accuracy with no PI versus with a rollout PI for Qwen3-1.7B and Qwen3-4B, stratified by whether the rollout PI was correct or incorrect, for pass@1 and pass@8 at 8k and 16k token budgets, with deltas and 95% confidence intervals.">
   </a>
-  <figcaption style="width: 100%;" markdown="span"><strong>Figure 3.</strong> Effect of correct vs incorrect rollout PI on pass@k accuracy at 8k and 16k token budgets for Qwen3-1.7B and Qwen3-4B. CIs are still wide so its worth running this with more samples in the future.</figcaption>
+  <figcaption style="width: 100%;" markdown="span"><strong>Figure 3.</strong> Effect of correct vs incorrect rollout PI on pass@k accuracy at 8k and 16k token budgets for Qwen3-1.7B and Qwen3-4B. CIs are quite wide so its worth running this with more samples in the future.</figcaption>
 </figure>
 
-Correct rollouts predictably increase pass@k across token budgets. With 8k tokens, where many incorrect rollouts are max length truncations, even incorrect rollouts as PI boost pass@k. At 16k, incorrect rollouts are strongly detrimental as PI for both models. This suggests that models can extract useful information in-context from even incorrect but truncated rollouts. Completed incorrect solutions appear to be extremely harmful.
+Correct rollouts predictably increase pass@k across token budgets. With 8k tokens, where many incorrect rollouts are max length truncations, even incorrect rollouts as PI boost pass@k. At 16k, incorrect rollouts are strongly detrimental as PI for both models. This suggests that models can extract useful [^useful] information in-context from even incorrect but truncated rollouts. Completed incorrect solutions appear to be extremely harmful.
 
-What happens when we distill from these self-teachers?
+What happens when we distill from these self-teachers? Does higher pass@k in the self-teacher translate to higher pass@k in the student? Is there a relationship between uncertainty verbalization in the self-teacher with student accuracy?
+
+<figure id="fig-4">
+  <a href="/images/sdft_passk_bars.png" title="Open full size" style="width: 100%;">
+  <img src="/images/sdft_passk_bars.png" alt="Grouped bar chart of pass@1, pass@8 and pass@16 on AIME24 for Qwen3-1.7B and Qwen3-4B, comparing the base model against self-distillation with rollout, hint, answer and full PI, with a dashed line marking the base model.">
+  </a>
+  <figcaption style="width: 100%;" markdown="span"><strong>Figure 4.</strong> pass@1, pass@8 and pass@16 on AIME24 for Qwen3-1.7B and Qwen3-4B after self-distillation on DeepMath with each choice of PI. Dashed line marks the base model.</figcaption>
+</figure>
+
+
 
 
 
@@ -109,6 +118,8 @@ What happens when we distill from these self-teachers?
 [^why-training]: We primarily care about how the self-teacher behaves on training data. The self-teacher is absent at test-time.
 
 [^dropped-problem]: 1 problem is dropped for Qwen3-4B because the full PI exceeds max model len.
+
+[^useful]: By useful we only mean information that helps to reach the correct final answer. Here we don't measure or verify model reasoning.
 
 
 
