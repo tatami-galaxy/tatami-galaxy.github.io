@@ -98,7 +98,7 @@ Its hard to precisely define exploration of an LLM's chain-of-thought (COT) but 
 
 [Figure 3](#fig-3) shows that correct rollouts predictably increase pass@k across token budgets. With 8k tokens, where many incorrect rollouts are max length truncations, even incorrect rollouts as PI boost pass@k. At 16k, incorrect rollouts are strongly detrimental as PI for both models. This suggests that models can extract useful [^useful] information in-context from even incorrect but truncated rollouts. Completed incorrect solutions appear to be extremely harmful.
 
-What happens when we distill from these self-teachers? Does higher pass@k in the self-teacher translate to higher pass@k in the student? Is there a relationship between uncertainty verbalization in the self-teacher with student accuracy?
+What happens when we distill from these self-teachers? Does higher training set pass@k in the self-teacher translate to higher out-of-distribution pass@k in the student? Is there a relationship between uncertainty verbalization in the self-teacher with student accuracy?
 
 <figure id="fig-4">
   <a href="/images/sdft_passk_bars.png" title="Open full size" style="width: 100%;">
@@ -107,9 +107,15 @@ What happens when we distill from these self-teachers? Does higher pass@k in the
   <figcaption style="width: 100%;" markdown="span"><strong>Figure 4.</strong> pass@1, pass@8 and pass@16 on AIME24 for Qwen3-1.7B and Qwen3-4B after self-distillation on DeepMath with each choice of PI.</figcaption>
 </figure>
 
-[Figure 4](#fig-4) shows evaluation results after training on Deepmath for 200 steps. Its clear that higher self-teacher pass@k does not directly translate to higher student pass@k. Only hint PI consistently improves the model beyond its baseline accuracy on AIME24; the rest generally degrade the model, often substantially. The rollout PI again has an interesting behavior if we contrast it with the full PI. The full PI are correct (final answer) reasoning traces from the Deepmath dataset, produced by Deepseek-R1 [[1]](#ref-1). It is an older model but significantly larger and have higher pass@1 accuracies than both the Qwen models we are evaluating. In contrast, the rollout PI is often demonstrably wrong. The rollout PI conditioned self-teacher also has significantly lower pass@k than the full PI. However, the rollout PI conditioned self-teacher degrades the student *less* than the full PI.
+[Figure 4](#fig-4) shows evaluation results after training on Deepmath for 200 steps and 8k token budget, with a frozen teacher and sampled-token distillation (see [TRL SDFTConfig](https://huggingface.co/docs/trl/v1.9.2/en/sdft_trainer#trl.experimental.sdft.SDFTConfig)). Its clear that higher self-teacher pass@k does not directly translate to higher student pass@k. Only hint PI consistently improves the model beyond its baseline accuracy on AIME24; the rest generally degrade the model, often substantially. The rollout PI again has an interesting behavior if we contrast it with the full PI. The full PI are correct (final answer) reasoning traces from the Deepmath dataset, produced by Deepseek-R1 [[1]](#ref-1). It is an older model but significantly larger and have higher pass@1 accuracies than both the Qwen models we are evaluating. In contrast, the rollout PI is often demonstrably wrong. The rollout PI conditioned self-teacher also has significantly lower pass@k than the full PI. However, the rollout PI conditioned self-teacher degrades the student *less* than the full PI. A plausible explanation for this could be that the full PI is perhaps distributionally quite different from the rollout PI, since it comes from a different model. We will investigate this but before that lets carefully look at the relationship between self-teacher uncertainty verbalization and student accuracy :  
 
-[correlation between self teacher uncertainty and student pass@k]
+<figure id="fig-5">
+  <a href="/images/teacher_uncertainty_vs_student_8k.png" title="Open full size" style="width: 100%;">
+  <img src="/images/teacher_uncertainty_vs_student_8k.png" alt="Two stacked panels, one per model, plotting student pass@1, pass@8 and pass@16 on AIME24 against the self-teacher's mean chain-of-thought epistemic marker count, with points labelled by the PI used: full, rollout, answer and hint.">
+  </a>
+  <figcaption style="width: 100%;" markdown="span"><strong>Figure 5.</strong> Self-teacher uncertainty verbalization against student pass@k on AIME24, for students distilled on DeepMath at 8k token budget for both self-teacher and student. Every point is one choice of PI  at the mean CoT epistemic marker count of the self-teacher it was distilled from.</figcaption>
+</figure>
+
 
 
 
@@ -117,7 +123,7 @@ What happens when we distill from these self-teachers? Does higher pass@k in the
 
 [^critique]: The self-teacher is trying to solve the problem from each student prefix. Given this objective, its next-token distribution over that token position is the 'critique' of that token.
 
-[^why-training]: We primarily care about how the self-teacher behaves on training data. The self-teacher is absent at test-time.
+[^why-training]: We primarily care about how the self-teacher behaves on training data. The self-teacher is absent at test-time. For the student performance we will always look at OOD benchmarks and not training data.
 
 [^dropped-problem]: 1 problem is dropped for Qwen3-4B because the full PI exceeds max model len.
 
