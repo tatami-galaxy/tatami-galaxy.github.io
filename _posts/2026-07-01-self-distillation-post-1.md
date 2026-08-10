@@ -87,7 +87,7 @@ Its hard to precisely define exploration of an LLM's chain-of-thought (COT) but 
   <figcaption style="width: 100%;" markdown="span"><strong>Figure 2.</strong> Verbalized uncertainty against pass@8 accuracy for Qwen3-1.7B and Qwen3-4B on 128 DeepMath problems[^dropped-problem] under different PIs -> none: no PI, hint: a self generated hint from a correct demonstration, answer: the correct final answer, rollout: a self generated rollout which may be correct or incorrect, full: a full demonstration. Epistemic marker set is same as Kim et. al [[23]](#ref-23) </figcaption>
 </figure>
 
-As we make the PI progressively more informative about the problem, uncertainty verbalization decreases as expected. Its somewhat interesting what happens when we use an *unverified* rollout as PI. Its simply a self-generated rollout for the same prompt which may or may not be the correct solution. Lets measure how it affects pass@k at different token budgets when the rollout is correct vs when it is incorrect : 
+[Figure 2](#fig-2) suggests that as we make the PI progressively more informative about the problem, uncertainty verbalization decreases as expected. Its somewhat interesting what happens when we use an *unverified* rollout as PI. Its simply a self-generated rollout for the same prompt which may or may not be the correct solution. Lets measure how it affects pass@k at different token budgets when the rollout is correct vs when it is incorrect : 
 
 <figure id="fig-3">
   <a href="/images/rollout_pi_stratified.png" title="Open full size" style="width: 100%;">
@@ -96,7 +96,7 @@ As we make the PI progressively more informative about the problem, uncertainty 
   <figcaption style="width: 100%;" markdown="span"><strong>Figure 3.</strong> Effect of correct vs incorrect rollout PI on pass@k accuracy at 8k and 16k token budgets for Qwen3-1.7B and Qwen3-4B. CIs are quite wide so its worth running this with more samples in the future.</figcaption>
 </figure>
 
-Correct rollouts predictably increase pass@k across token budgets. With 8k tokens, where many incorrect rollouts are max length truncations, even incorrect rollouts as PI boost pass@k. At 16k, incorrect rollouts are strongly detrimental as PI for both models. This suggests that models can extract useful [^useful] information in-context from even incorrect but truncated rollouts. Completed incorrect solutions appear to be extremely harmful.
+[Figure 3](#fig-3) shows that correct rollouts predictably increase pass@k across token budgets. With 8k tokens, where many incorrect rollouts are max length truncations, even incorrect rollouts as PI boost pass@k. At 16k, incorrect rollouts are strongly detrimental as PI for both models. This suggests that models can extract useful [^useful] information in-context from even incorrect but truncated rollouts. Completed incorrect solutions appear to be extremely harmful.
 
 What happens when we distill from these self-teachers? Does higher pass@k in the self-teacher translate to higher pass@k in the student? Is there a relationship between uncertainty verbalization in the self-teacher with student accuracy?
 
@@ -104,10 +104,10 @@ What happens when we distill from these self-teachers? Does higher pass@k in the
   <a href="/images/sdft_passk_bars.png" title="Open full size" style="width: 100%;">
   <img src="/images/sdft_passk_bars.png" alt="Grouped bar chart of pass@1, pass@8 and pass@16 on AIME24 for Qwen3-1.7B and Qwen3-4B, comparing the base model against self-distillation with rollout, hint, answer and full PI, with a dashed line marking the base model.">
   </a>
-  <figcaption style="width: 100%;" markdown="span"><strong>Figure 4.</strong> pass@1, pass@8 and pass@16 on AIME24 for Qwen3-1.7B and Qwen3-4B after self-distillation on DeepMath with each choice of PI. Dashed line marks the base model.</figcaption>
+  <figcaption style="width: 100%;" markdown="span"><strong>Figure 4.</strong> pass@1, pass@8 and pass@16 on AIME24 for Qwen3-1.7B and Qwen3-4B after self-distillation on DeepMath with each choice of PI.</figcaption>
 </figure>
 
-
+[Figure 4](#fig-4) shows evaluation results after training on Deepmath for 200 steps. 
 
 
 
