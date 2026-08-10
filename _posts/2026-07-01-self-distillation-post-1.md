@@ -71,7 +71,7 @@ The OPSD objective is minimized whereas the GRPO objective is maximized (expecte
 
 Why should some choice of PI enable this self-teacher construction? This is because the student in this case is an instruction tuned LLM with in-context learning abilities (ICL) [[16]](#ref-16) [[17]](#ref-17). Having the PI in context, demonstrably increases task performance of the self-teacher beyond the student [[19]](#ref-19). Its easy to be convinced by this. For example, an instruction tuned LLM should be able to trivially solve a problem when the entire solution (PI) is present in its context. It only needs to have the minimal intelligence to recognize the solution and copy it. This also leads to the interesting question of how should one choose the PI. The choice of PI is crucial as we'll see but the formulation does not impose strong constraints on what the PI should be.
 
-## Analyzing self-distillation
+## Exploring self-distillation
 
 Does OPSD work? It seems to work well for a range of tasks and domains [[14]](#ref-14) [[18]](#ref-18) [[19]](#ref-19) [[20]](#ref-20). However it seems to have a particularly important and interesting failure mode which will be the subject of our discussion here. OPSD can lead to training collapse in thinking models for reasoning tasks like math [[21]](#ref-21) [[22]](#ref-22) [[23]](#ref-23). It seems that while the self-teacher can produce the correct solution (trivially, if the PI *is* the solution), the PI makes the self-teacher increasingly confident, causing it to penalize the student's exploration, essential for thinking models [[21]](#ref-21) [[22]](#ref-22) [[23]](#ref-23). 
 
@@ -104,10 +104,10 @@ What happens when we distill from these self-teachers? Does higher training set 
   <a href="/images/sdft_passk_bars.png" title="Open full size" style="width: 100%;">
   <img src="/images/sdft_passk_bars.png" alt="Grouped bar chart of pass@1, pass@8 and pass@16 on AIME24 for Qwen3-1.7B and Qwen3-4B, comparing the base model against self-distillation with rollout, hint, answer and full PI, with a dashed line marking the base model.">
   </a>
-  <figcaption style="width: 100%;" markdown="span"><strong>Figure 4.</strong> pass@1, pass@8 and pass@16 on AIME24 for Qwen3-1.7B and Qwen3-4B after self-distillation on DeepMath with each choice of PI.</figcaption>
+  <figcaption style="width: 100%;" markdown="span"><strong>Figure 4.</strong> pass@1, pass@8 and pass@16 on AIME24 [[26]](#ref-26) for Qwen3-1.7B and Qwen3-4B after self-distillation on DeepMath with each choice of PI.</figcaption>
 </figure>
 
-[Figure 4](#fig-4) shows evaluation results after training on Deepmath for 200 steps and 8k token budget, with a frozen teacher and sampled-token distillation (see [TRL SDFTConfig](https://huggingface.co/docs/trl/v1.9.2/en/sdft_trainer#trl.experimental.sdft.SDFTConfig)). Its clear that higher self-teacher pass@k does not directly translate to higher student pass@k. Only hint PI consistently improves the model beyond its baseline accuracy on AIME24; the rest generally degrade the model, often substantially. 
+[Figure 4](#fig-4) shows evaluation results after training on Deepmath for 200 steps and 8k token budget, with a frozen teacher and sampled-token distillation (see [TRL SDFTConfig](https://huggingface.co/docs/trl/v1.9.2/en/sdft_trainer#trl.experimental.sdft.SDFTConfig)). Its clear that higher self-teacher pass@k does not directly translate to higher student pass@k. Only hint PI consistently improves the model beyond its baseline accuracy on AIME24 [[26]](#ref-26); the rest generally degrade the model, often substantially. 
 
 The rollout PI again has an interesting behavior if we contrast it with the full PI. The full PI are correct (final answer) reasoning traces from the Deepmath dataset, produced by Deepseek-R1 [[1]](#ref-1). It is an older model but significantly larger and have higher pass@1 accuracies than both the Qwen models we are evaluating. In contrast, the rollout PI is often demonstrably wrong. The rollout PI conditioned self-teacher also has significantly lower pass@k than the full PI. However, the rollout PI conditioned self-teacher degrades the student *less* than the full PI. A plausible explanation for this could be that the full PI is perhaps distributionally quite different from the rollout PI, since it comes from a different model. We will investigate this but before that lets look at the relationship between self-teacher uncertainty verbalization and student accuracy :  
 
@@ -118,7 +118,9 @@ The rollout PI again has an interesting behavior if we contrast it with the full
   <figcaption style="width: 100%;" markdown="span"><strong>Figure 5.</strong> Self-teacher uncertainty verbalization against student pass@k on AIME24. Students distilled on DeepMath at 8k token budget for both self-teacher and student. Every point is one choice of PI at the mean CoT epistemic marker count of the self-teacher it was distilled from.</figcaption>
 </figure>
 
-[Figure 5](#fig-5) shows the opposite trend of [Figure 2](#fig-2) (note that the x-axis is inverted in [Figure 2](#fig-2)). Rising self-teacher uncertainty verbalization seems to be related to higher student pass@k. Hint PI leads to the highest student pass@k with the hint conditioned self-teacher being closest to the student in terms of uncertainty verbalization (see [Figure 2](#fig-2)). 
+[Figure 5](#fig-5) shows the opposite trend of [Figure 2](#fig-2) (note that the x-axis is inverted in [Figure 2](#fig-2)). Rising self-teacher uncertainty verbalization seems to be related to higher student pass@k. Hint PI leads to the highest student pass@k with the hint conditioned self-teacher being closest to the student in terms of uncertainty verbalization. 
+
+**What have we learned so far?**
 
 
 
@@ -162,3 +164,4 @@ The rollout PI again has an interesting behavior if we contrast it with the full
 23. <a id="ref-23"></a>Kim, J., Luo, X., Kim, M., et al. (2026). [*Why Does Self-Distillation (Sometimes) Degrade the Reasoning Capability of LLMs?*](https://arxiv.org/abs/2603.24472). arXiv:2603.24472.
 24. <a id="ref-24"></a>He, Z., Liang, T., Xu, J., et al. (2025). [*DeepMath-103K: A Large-Scale, Challenging, Decontaminated, and Verifiable Mathematical Dataset for Advancing Reasoning*](https://arxiv.org/abs/2504.11456). arXiv:2504.11456.
 25. <a id="ref-25"></a>Yang, A., Li, A., Yang, B., et al. (2025). [*Qwen3 Technical Report*](https://arxiv.org/abs/2505.09388). arXiv:2505.09388.
+26. <a id="ref-26"></a>Hugging Face H4 (2024). [*AIME 2024*](https://huggingface.co/datasets/HuggingFaceH4/aime_2024). Hugging Face Datasets. The 30 problems of AIME 2024 I and II, derived from [AI-MO/aimo-validation-aime](https://huggingface.co/datasets/AI-MO/aimo-validation-aime).
