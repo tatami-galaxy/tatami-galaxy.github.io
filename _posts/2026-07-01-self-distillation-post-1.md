@@ -107,7 +107,7 @@ What happens when we distill from these self-teachers? Does higher pass@k in the
   <figcaption style="width: 100%;" markdown="span"><strong>Figure 4.</strong> pass@1, pass@8 and pass@16 on AIME24 for Qwen3-1.7B and Qwen3-4B after self-distillation on DeepMath with each choice of PI.</figcaption>
 </figure>
 
-[Figure 4](#fig-4) shows evaluation results after training on Deepmath for 200 steps. 
+[Figure 4](#fig-4) shows evaluation results after training on Deepmath for 200 steps. Its clear that higher self-teacher pass@k does not translate to higher student pass@k. Only hint PI improves the model beyond its baseline accuracy on AIME24; the rest degrade the model, often substantially. 
 
 
 
