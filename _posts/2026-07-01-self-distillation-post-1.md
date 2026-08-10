@@ -128,9 +128,11 @@ The rollout PI again has an interesting behavior if we contrast it with the full
 
 **3.** Even an incorrect PI in context can boost self-teacher accuracy if the PI is truncated before reaching the (incorrect) final answer.
 
-**4.** Only the hint conditioned self-teacher consistently lifts student pass@k accuracy above baseline.
+**4.** Only the hint conditioned self-teacher consistently lifts student pass@k above baseline.
 
 **5.** Even unverified but self-generated rollouts as PI is less destructive to the student compared to correct full solution PIs from a stronger but different model. 
+
+We will do more experiments to cement these findings but they already hint at (hehe) a few directions we should explore. 
 
 
 
