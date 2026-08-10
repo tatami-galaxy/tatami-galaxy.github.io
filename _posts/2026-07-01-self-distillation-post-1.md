@@ -90,7 +90,7 @@ Its hard to precisely define exploration of an LLM's chain-of-thought (COT) but 
 [Figure 2](#fig-2) suggests that as we make the PI progressively more informative about the problem, uncertainty verbalization decreases as expected. Its somewhat interesting what happens when we use an *unverified* rollout as PI. Its simply a self-generated rollout for the same prompt which may or may not be the correct solution. Lets measure how it affects pass@k at different token budgets when the rollout is correct vs when it is incorrect : 
 
 <figure id="fig-3">
-  <a href="/images/rollout_pi_stratified.png" title="Open full size" style="width: 100%;">
+  <a href="/images/rollout_pi_stratified.png" title="Open full size" style="width: 120%;">
   <img src="/images/rollout_pi_stratified.png" alt="Four panel arrow plot showing accuracy with no PI versus with a rollout PI for Qwen3-1.7B and Qwen3-4B, stratified by whether the rollout PI was correct or incorrect, for pass@1 and pass@8 at 8k and 16k token budgets, with deltas and 95% confidence intervals.">
   </a>
   <figcaption style="width: 100%;" markdown="span"><strong>Figure 3.</strong> Effect of correct vs incorrect rollout PI on pass@k accuracy at 8k and 16k token budgets for Qwen3-1.7B and Qwen3-4B. CIs are quite wide so its worth running this with more samples in the future.</figcaption>
