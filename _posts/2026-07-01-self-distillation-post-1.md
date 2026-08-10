@@ -25,7 +25,7 @@ $$
 
 where $$\rho_{i,t}(\theta)=\frac{\pi_\theta(o_{i,t}\mid q,o_{i,<t})}{\pi_{\theta_{\mathrm{old}}}(o_{i,t}\mid q,o_{i,<t})}$$ is the importance sampling ratio (useful even in a purely on-policy setting).
 
-GRPO has proved to be quite successful for post-training LLMs in verifiable domains [[1]](#ref-1) [[4]](#ref-4). Over the last couple of years it has spawned numerous variants that tackle its different amendable shortcomings [[6]](#ref-6) [[7]](#ref-7) [[8]](#ref-8). *Halving* the memory overhead and alleviating training instabilities of PPO, that become more and more acute at frontier scale, is naturally quite appealing. **GRPO however is fundamentally incapable of a particularly desirable attribute of PPO : granular credit assignment per rollout**.
+GRPO has proved to be quite successful for post-training LLMs in verifiable domains [[1]](#ref-1) [[4]](#ref-4). Over the last couple of years it has spawned numerous variants that tackle its different amendable shortcomings [[6]](#ref-6) [[7]](#ref-7) [[8]](#ref-8). *Halving* the memory overhead and alleviating training instabilities of PPO, that become more and more acute at frontier scale, is naturally quite appealing. GRPO however is fundamentally incapable of a particularly desirable attribute of PPO : granular credit assignment per rollout.
 
 <figure id="fig-1">
   <a href="/images/ppo-grpo-credit.svg" title="Open full size">
@@ -107,7 +107,7 @@ What happens when we distill from these self-teachers? Does higher pass@k in the
   <figcaption style="width: 100%;" markdown="span"><strong>Figure 4.</strong> pass@1, pass@8 and pass@16 on AIME24 for Qwen3-1.7B and Qwen3-4B after self-distillation on DeepMath with each choice of PI.</figcaption>
 </figure>
 
-[Figure 4](#fig-4) shows evaluation results after training on Deepmath for 200 steps. Its clear that higher self-teacher pass@k does not directly translate to higher student pass@k. Only hint PI consistently improves the model beyond its baseline accuracy on AIME24; the rest generally degrade the model, often substantially. The rollout PI again has an interesting behavior if we contrast it with the full PI. 
+[Figure 4](#fig-4) shows evaluation results after training on Deepmath for 200 steps. Its clear that higher self-teacher pass@k does not directly translate to higher student pass@k. Only hint PI consistently improves the model beyond its baseline accuracy on AIME24; the rest generally degrade the model, often substantially. The rollout PI again has an interesting behavior if we contrast it with the full PI. The full PI are correct (final answer) reasoning traces from the Deepmath dataset, produced by Deepseek-R1 [[1]](#ref-1). It is an older model but significantly larger and have higher pass@1 accuracies than both the Qwen models we are evaluating [compare pass@1 values]. In contrast, the rollout PI is often demonstrably wrong. The rollout PI conditioned self-teacher also has significantly lower pass@k than the full PI. However, the rollout PI conditioned self-teacher degrades the student *less* than the full PI.
 
 [correlation between self teacher uncertainty and student pass@k]
 
