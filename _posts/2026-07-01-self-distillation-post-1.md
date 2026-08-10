@@ -123,9 +123,13 @@ The rollout PI again has an interesting behavior if we contrast it with the full
 **What have we learned so far?**
 
 **1.** A more informative PI tends to reduce uncertainty verbalization in the self-teacher.
+
 **2.** An incorrect PI strongly degrades the self-teacher accuracy.
+
 **3.** Even an incorrect PI in context can boost self-teacher accuracy if the PI is truncated before reaching the (incorrect) final answer.
-**4.** Only the hint conditioned self-teacher consistently lifts student pass@k accuracy above baseline
+
+**4.** Only the hint conditioned self-teacher consistently lifts student pass@k accuracy above baseline.
+
 **5.** Even unverified but self-generated rollouts as PI is less destructive to the student compared to correct full solution PIs from a stronger but different model. 
 
 
