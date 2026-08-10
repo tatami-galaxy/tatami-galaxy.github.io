@@ -38,7 +38,9 @@ Most state-of-the-art LLMs are now thinking models. They generate reasoning trac
 
 Compute however is a constraint outside of frontier labs, and perhaps it should be. We would like to be able to train reasoning models in as compute-efficient a manner as possible. Algorithms that are able to perform *accurate* granular credit assignment at a similar rollout budget should intuitively be much more sample and compute efficient than GRPO. If such an algorithm scales well, then that would also be superior to group level advantage estimation at frontier scale. Granular credit assignment is also something humans naturally attempt to do, often very successfully. Therefore we should aspire to mitigate the significant shortcomings of PPO like policy gradient methods or attempt to assign token level credit in other ways.
 
-**On-policy distillation** (OPD) offers a convenient way of assigning granular credit to rollouts *when we have a access to a much stronger model* [[10]](#ref-10) [[11]](#ref-11) [[12]](#ref-12). As the name suggests, it computes the teacher's next-token distribution at every prefix of the *student's* rollouts. An *f*-divergence between the student and teacher distributions then becomes the token level supervision or 'credit'. This formulation also has the advantage of not needing a verifier or a reward model and can be readily applied to non-verifiable domains, assuming the teacher has enough domain expertise. This has proven to be extremely useful for distilling a large post-trained model into smaller model of the same family [[10]](#ref-10) [[11]](#ref-11) [[13]](#ref-13). The goal is obviously to do such credit assignment without first training a large model with group level advantage estimation. However its still worth looking into OPD carefully as it offers *a* surrogate to study and analyze how our desirable algorithm should behave. 
+### On-policy distillation
+
+On-policy distillation (OPD) offers a convenient way of assigning granular credit to rollouts *when we have a access to a much stronger model* [[10]](#ref-10) [[11]](#ref-11) [[12]](#ref-12). As the name suggests, it computes the teacher's next-token distribution at every prefix of the *student's* rollouts. An *f*-divergence between the student and teacher distributions then becomes the token level supervision or 'credit'. This formulation also has the advantage of not needing a verifier or a reward model and can be readily applied to non-verifiable domains, assuming the teacher has enough domain expertise. This has proven to be extremely useful for distilling a large post-trained model into smaller model of the same family [[10]](#ref-10) [[11]](#ref-11) [[13]](#ref-13). The goal is obviously to do such credit assignment without first training a large model with group level advantage estimation. However its still worth looking into OPD carefully as it offers *a* surrogate to study and analyze how our desirable algorithm should behave. 
 
 ## What is self-distillation
 
@@ -87,7 +89,7 @@ Its hard to precisely define exploration of an LLM's chain-of-thought (COT) but 
   <figcaption style="width: 100%;" markdown="span"><strong>Figure 2.</strong> Verbalized uncertainty against pass@8 accuracy for Qwen3-1.7B and Qwen3-4B on 128 DeepMath problems[^dropped-problem] under different PIs -> none: no PI, hint: a self generated hint from a correct demonstration, answer: the correct final answer, rollout: a self generated rollout which may be correct or incorrect, full: a full demonstration. Epistemic marker set is same as Kim et. al [[23]](#ref-23) </figcaption>
 </figure>
 
-[Figure 2](#fig-2) suggests that as we make the PI progressively more informative about the problem, uncertainty verbalization decreases as expected. Its somewhat interesting what happens when we use an *unverified* rollout as PI. Its simply a self-generated rollout for the same prompt which may or may not be the correct solution. Lets measure how it affects pass@k at different token budgets when the rollout is correct vs when it is incorrect : 
+[Figure 2](#fig-2) suggests that as we make the PI progressively more informative about the problem, uncertainty verbalization decreases. Its somewhat interesting what happens when we use an *unverified* rollout as PI. Its simply a self-generated rollout for the same prompt which may or may not be the correct solution. Lets measure how it affects pass@k at different token budgets when the rollout is correct vs when it is incorrect : 
 
 <figure id="fig-3" style="width: 130%; max-width: none; margin-left: -5.5%;">
   <a href="/images/rollout_pi_stratified.png" title="Open full size" style="width: 100%;">
@@ -96,7 +98,7 @@ Its hard to precisely define exploration of an LLM's chain-of-thought (COT) but 
   <figcaption style="width: 100%;" markdown="span"><strong>Figure 3.</strong> Effect of correct vs incorrect rollout PI on pass@k accuracy at 8k and 16k token budgets for Qwen3-1.7B and Qwen3-4B. CIs are quite wide so its worth running this with more samples in the future.</figcaption>
 </figure>
 
-[Figure 3](#fig-3) shows that correct rollouts predictably increase pass@k across token budgets. With 8k tokens, where many incorrect rollouts are max length truncations, even incorrect rollouts as PI boost pass@k. At 16k, incorrect rollouts are strongly detrimental as PI for both models. This suggests that models can extract useful [^useful] information in-context from even incorrect but truncated rollouts. Completed incorrect solutions appear to be extremely harmful.
+[Figure 3](#fig-3) shows that correct rollouts predictably increase pass@k across token budgets. With 8k tokens, where many incorrect rollouts are max length truncations, *even incorrect rollouts as PI boost pass@k*. At 16k, incorrect rollouts are strongly detrimental as PI for both models. This suggests that models can extract useful [^useful] information in-context from even incorrect but truncated rollouts. Completed incorrect solutions appear to be extremely harmful.
 
 What happens when we distill from these self-teachers? Does higher training set pass@k in the self-teacher translate to higher out-of-distribution pass@k in the student? Is there a relationship between uncertainty verbalization in the self-teacher with student accuracy?
 
@@ -120,19 +122,24 @@ The rollout PI again has an interesting behavior if we contrast it with the full
 
 [Figure 5](#fig-5) shows the opposite trend of [Figure 2](#fig-2) (note that the x-axis is inverted in [Figure 2](#fig-2)). Rising self-teacher uncertainty verbalization seems to be related to higher student pass@k. Hint PI leads to the highest student pass@k with the hint conditioned self-teacher being closest to the student in terms of uncertainty verbalization. 
 
-**What have we learned so far?**
+### What have we learned so far?
 
-**1.** A more informative PI tends to reduce uncertainty verbalization in the self-teacher.
+Our experiments so far suggest a few things which we list below. Note that we haven't proven any of these claims. Its only the case that the results seem to point in these directions. We will explore them next to see if we can gather more evidence that support or contradict these claims : 
 
-**2.** An incorrect PI strongly degrades the self-teacher accuracy.
+**1. The PI needs to be correct and minimally informative about the reasoning process :** 
 
-**3.** Even an incorrect PI in context can boost self-teacher accuracy if the PI is truncated before reaching the (incorrect) final answer.
+  - An incorrect PI strongly degrades the self-teacher accuracy.
+  - Only the hint conditioned self-teacher consistently lifts student pass@k above baseline.
+  - Even an incorrect PI in context can boost self-teacher accuracy if the PI is truncated before reaching the (incorrect) final answer.
 
-**4.** Only the hint conditioned self-teacher consistently lifts student pass@k above baseline.
+**2. The self-teacher needs to preserve uncertainty verbalization :**
+  - A more informative PI tends to reduce uncertainty verbalization in the self-teacher.
+  - Distilling from highly confident teachers is detrimental.
 
-**5.** Even unverified but self-generated rollouts as PI is less destructive to the student compared to correct full solution PIs from a stronger but different model. 
+**3. The PI distribution should be close to the student distribution :**
 
-We will do more experiments to cement these findings but they already hint at (hehe) a few directions we should explore. 
+  - Even unverified but self-generated rollouts as PI is less destructive to the student compared to correct full solution PIs from a stronger but different model. 
+
 
 
 
