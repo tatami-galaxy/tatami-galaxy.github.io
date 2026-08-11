@@ -109,7 +109,8 @@ What happens when we distill from these self-teachers? Does higher training set 
   <figcaption style="width: 100%;" markdown="span"><strong>Figure 4.</strong> pass@1, pass@8 and pass@16 on AIME24 [[26]](#ref-26) for Qwen3-1.7B and Qwen3-4B after self-distillation on DeepMath with each choice of PI.</figcaption>
 </figure>
 
-[Figure 4](#fig-4) shows evaluation results after training on Deepmath for 200 steps and 8k token budget, with a frozen teacher and sampled-token distillation (see [TRL SDFTConfig](https://huggingface.co/docs/trl/v1.9.2/en/sdft_trainer#trl.experimental.sdft.SDFTConfig)). Its clear that higher self-teacher pass@k does not directly translate to higher student pass@k. Only hint PI consistently improves the model beyond its baseline accuracy on AIME24 [[26]](#ref-26); the rest generally degrade the model, often substantially. 
+[Figure 4](#fig-4) shows evaluation results (best checkpoint) after training on Deepmath for 200 steps and 8k token budget, with a frozen teacher and sampled-token distillation (see [TRL SDFTConfig](https://huggingface.co/docs/trl/v1.9.2/en/sdft_trainer#trl.experimental.sdft.SDFTConfig)). Its clear that higher self-teacher pass@k does not directly translate to higher student pass@k. Only hint PI consistently improves the model beyond its baseline accuracy on AIME24 [[26]](#ref-26); the rest generally degrade the model, often substantially. This also matches our intution about distillation in general : A more accurate teacher is not necessarily a better teacher [cite : 
+On the Efficacy of Knowledge Distillation"]
 
 The rollout PI again has an interesting behavior if we contrast it with the full PI. The full PI are correct (final answer) reasoning traces from the Deepmath dataset, produced by Deepseek-R1 [[1]](#ref-1). It is an older model but significantly larger and have higher pass@1 accuracies than both the Qwen models we are evaluating. In contrast, the rollout PI is often demonstrably wrong. The rollout PI conditioned self-teacher also has significantly lower pass@k than the full PI. However, the rollout PI conditioned self-teacher degrades the student *less* than the full PI. A plausible explanation for this could be that the full PI is perhaps distributionally quite different from the rollout PI, since it comes from a different model. We will investigate this but before that lets look at the relationship between self-teacher uncertainty verbalization and student accuracy :  
 
@@ -124,25 +125,35 @@ The rollout PI again has an interesting behavior if we contrast it with the full
 
 ### What have we learned so far?
 
-Our experiments so far suggest a few things which we list below. Note that we haven't proven any of these claims. Its only the case that the results seem to point in these directions. We will explore them next to see if we can gather more evidence that support or contradict these claims : 
+Our experiments so far suggest a few things which we list below : 
 
 **1. The PI needs to be correct and minimally informative about the reasoning process :** 
 
   - An incorrect PI strongly degrades the self-teacher accuracy
-  - Only the hint conditioned self-teacher consistently lifts student pass@k above baseline
+  - Only the hint conditioned self-teacher consistently lifts student pass@k above baseline, outperforming both full and answer PIs
   - Even an incorrect PI in context can boost self-teacher accuracy if the PI is truncated before reaching the (incorrect) final answer
 
 **2. The self-teacher needs to preserve uncertainty verbalization :**
-  - A more informative PI tends to reduce uncertainty verbalization in the self-teacher.
+
+  - A more informative PI tends to reduce uncertainty verbalization in the self-teacher
   - Distilling from highly confident (in terms of verbalization) teachers is detrimental
 
-**3. The PI distribution should be close to the student distribution :**
+**3. An 'on-policy' PI is better than an 'off-policy' PI :**
 
   - Even unverified but self-generated rollouts as PI is less destructive to the student compared to correct full solution PIs from a stronger but different model 
+  - The best performing PI is the hint PI which is student generated
 
-Claim 3 is the strongest claim here and so let us see if we can say more about this. Nicolicioiu et al. [[27]](#ref-27) argue that : "*A teacher may struggle to effectively guide a correct but less typical rollout when conditioned on a more standard or canonical demonstration, simply because the two trajectories share fewer common patterns. As a result, distinctive yet valid solution strategies receive weaker learning signals.*"
 
+### What do we want?
 
+Let's step back a little and think about what is it that we want to achieve through our analysis here. *We are looking for quantifiable properties of the self-teacher that predicts how "good" the self-teacher is for the student*. This will give us actionable insights on how to generate PIs or optimize the self-teacher. So far we only have some qualitative indicators of how the self-teacher needs to behave. But these are not exactly objectives we can meaningfully optimize towards [^qual-indicators].
+
+Our current observations suggests that a self-generated PI might be preferable to one from a different distribution. Nicolicioiu et al. [[27]](#ref-27) argue in favor of this by suggesting that self-distillation might be suboptimal when the PI and the student rollout trajectories share few common patterns. However our hint PI results show that the PI can be structurally very different from the student rollout while still resulting in an effective self-teacher. Instead of the PI, perhaps it makes sense to analyze the structural and distributional similarities between the student and the PI conditioned *self-teacher*. After all, its the self-teacher properties that directly influence student learning and not the PI by itself. As the choice of PI seems crucial for self-distillation, we'd like to have a better understanding of the self-teacher distribution under different PIs relative to the student distribution. 
+
+### Self-teacher vs student distributions
+
+The OPSD objective is itself an *f*-divergence between the self-teacher and the student. In our setting its the reverse KL. A simple quantity we could measure to start off is the average per-token KL on training samples :  
+ß
 
 
 
@@ -154,6 +165,7 @@ Claim 3 is the strongest claim here and so let us see if we can say more about t
 
 [^useful]: By useful we only mean information that helps to reach the correct final answer. Here we don't measure or verify model reasoning.
 
+[^qual-indicators] : For example we can't ask the student to simply "generate a better hint". We also probably should not optimize the self-teacher to verbalize more uncertainty as this is a very hackable objective. 
 
 
 
