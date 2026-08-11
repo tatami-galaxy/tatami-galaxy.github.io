@@ -109,8 +109,7 @@ What happens when we distill from these self-teachers? Does higher training set 
   <figcaption style="width: 100%;" markdown="span"><strong>Figure 4.</strong> pass@1, pass@8 and pass@16 on AIME24 [[26]](#ref-26) for Qwen3-1.7B and Qwen3-4B after self-distillation on DeepMath with each choice of PI.</figcaption>
 </figure>
 
-[Figure 4](#fig-4) shows evaluation results (best checkpoint) after training on Deepmath for 200 steps and 8k token budget, with a frozen teacher and sampled-token distillation (see [TRL SDFTConfig](https://huggingface.co/docs/trl/v1.9.2/en/sdft_trainer#trl.experimental.sdft.SDFTConfig)). Its clear that higher self-teacher pass@k does not directly translate to higher student pass@k. Only hint PI consistently improves the model beyond its baseline accuracy on AIME24 [[26]](#ref-26); the rest generally degrade the model, often substantially. This also matches our intution about distillation in general : A more accurate teacher is not necessarily a better teacher [cite : 
-On the Efficacy of Knowledge Distillation"]
+[Figure 4](#fig-4) shows evaluation results (best checkpoint) after training on Deepmath for 200 steps and 8k token budget, with a frozen teacher and sampled-token distillation (see [TRL SDFTConfig](https://huggingface.co/docs/trl/v1.9.2/en/sdft_trainer#trl.experimental.sdft.SDFTConfig)). Its clear that higher self-teacher pass@k does not directly translate to higher student pass@k. Only hint PI consistently improves the model beyond its baseline accuracy on AIME24 [[26]](#ref-26); the rest generally degrade the model, often substantially. This also matches our intution about distillation in general : A more accurate teacher is not necessarily a better teacher [[28]](#ref-28).
 
 The rollout PI again has an interesting behavior if we contrast it with the full PI. The full PI are correct (final answer) reasoning traces from the Deepmath dataset, produced by Deepseek-R1 [[1]](#ref-1). It is an older model but significantly larger and have higher pass@1 accuracies than both the Qwen models we are evaluating. In contrast, the rollout PI is often demonstrably wrong. The rollout PI conditioned self-teacher also has significantly lower pass@k than the full PI. However, the rollout PI conditioned self-teacher degrades the student *less* than the full PI. A plausible explanation for this could be that the full PI is perhaps distributionally quite different from the rollout PI, since it comes from a different model. We will investigate this but before that lets look at the relationship between self-teacher uncertainty verbalization and student accuracy :  
 
@@ -152,8 +151,24 @@ Our current observations suggests that a self-generated PI might be preferable t
 
 ### Self-teacher vs student distributions
 
-The OPSD objective is itself an *f*-divergence between the self-teacher and the student. In our setting its the reverse KL. A simple quantity we could measure to start off is the average per-token KL on training samples :  
-ß
+The OPSD objective is itself an *f*-divergence between the self-teacher and the student. In our setting its the reverse KL. A simple quantity we could measure is the average reverse KL across a rollout. In our setup we train with the KL evaluated at the sampled token, not true reverse KL over the vocabulary. Therefore it would be more faithful to average over this log ratio instead :
+
+$$
+\bar{\delta}(o) = \frac{1}{T}\sum_{t=1}^{T}
+\log\frac{\pi_\theta(o_t\mid q,o_{<t})}{\pi(o_t\mid q,c,o_{<t})},
+\tag{6}
+$$
+
+If we take the negative, this is simply the OPSD advantage in equation (5) averaged over the rollout : 
+
+$$
+\overline{A}(o)
+= \frac{1}{T}\sum_{t=1}^{T}\log\frac{\pi(o_t\mid q,c,o_{<t})}{\pi_\theta(o_t\mid q,o_{<t})}
+= \frac{1}{T}\sum_{t=1}^{T}\hat{A}_t .
+\tag{7}
+$$
+
+Let's measure $$\overline{A}(o)$$ across training checkpoints : 
 
 
 
@@ -165,7 +180,7 @@ The OPSD objective is itself an *f*-divergence between the self-teacher and the 
 
 [^useful]: By useful we only mean information that helps to reach the correct final answer. Here we don't measure or verify model reasoning.
 
-[^qual-indicators] : For example we can't ask the student to simply "generate a better hint". We also probably should not optimize the self-teacher to verbalize more uncertainty as this is a very hackable objective. 
+[^qual-indicators]: For example we can't ask the student to simply "generate a better hint". We also probably should not optimize the self-teacher to verbalize more uncertainty as this is a very hackable objective. 
 
 
 
@@ -199,3 +214,4 @@ The OPSD objective is itself an *f*-divergence between the self-teacher and the 
 25. <a id="ref-25"></a>Yang, A., Li, A., Yang, B., et al. (2025). [*Qwen3 Technical Report*](https://arxiv.org/abs/2505.09388). arXiv:2505.09388.
 26. <a id="ref-26"></a>Hugging Face H4 (2024). [*AIME 2024*](https://huggingface.co/datasets/HuggingFaceH4/aime_2024). Hugging Face Datasets. The 30 problems of AIME 2024 I and II, derived from [AI-MO/aimo-validation-aime](https://huggingface.co/datasets/AI-MO/aimo-validation-aime).
 27. <a id="ref-27"></a>Nicolicioiu, A. L., Pezeshki, M., & Courville, A. (2026). [*On-Policy Self-Distillation with Sampled Demonstrations Reduces Output Diversity*](https://arxiv.org/abs/2606.26091). arXiv:2606.26091.
+28. <a id="ref-28"></a>Cho, J. H., & Hariharan, B. (2019). [*On the Efficacy of Knowledge Distillation*](https://arxiv.org/abs/1910.01348). IEEE/CVF International Conference on Computer Vision.
