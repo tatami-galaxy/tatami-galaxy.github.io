@@ -100,6 +100,10 @@ Its hard to precisely define exploration of an LLM's chain-of-thought (COT) but 
 
 [Figure 3](#fig-3) shows that correct rollouts predictably increase pass@k across token budgets. With 8k tokens, where many incorrect rollouts are max length truncations, *even incorrect rollouts as PI boost pass@k*. At 16k, incorrect rollouts are strongly detrimental as PI for both models. This suggests that models can extract useful [^useful] information in-context from even incorrect but truncated rollouts. Completed incorrect solutions appear to be extremely harmful.
 
+All of the above is for uncertainty verbalization. What about other exploratory behaviors like search and self-correction? 
+
+[other self-teacher exploration behaviors]
+
 What happens when we distill from these self-teachers? Does higher training set pass@k in the self-teacher translate to higher out-of-distribution pass@k in the student? Is there a relationship between uncertainty verbalization in the self-teacher with student accuracy?
 
 <figure id="fig-4">
@@ -151,7 +155,7 @@ Our current observations suggests that a self-generated PI might be preferable t
 
 ### Self-teacher vs student distributions
 
-The OPSD objective is itself an *f*-divergence between the self-teacher and the student. In our setting its the reverse KL. A simple quantity we could measure is the average reverse KL across a rollout. In our setup we train with the KL evaluated at the sampled token, not true reverse KL over the vocabulary. Therefore it would be more faithful to average over this log ratio instead :
+The OPSD objective is itself an *f*-divergence between the self-teacher and the student. In our setting its the reverse KL. A simple quantity we could measure is the average reverse KL across a rollout. In our setup we train with the KL evaluated at the sampled token, not the true reverse KL over the vocabulary. Therefore it would be more faithful to average over this log ratio instead :
 
 $$
 \bar{\delta}(o) = \frac{1}{T}\sum_{t=1}^{T}
