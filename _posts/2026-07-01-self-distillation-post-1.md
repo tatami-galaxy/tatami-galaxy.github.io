@@ -146,7 +146,7 @@ The rollout PI [^self-rollout] again has an interesting behavior if we contrast 
   <figcaption style="width: 100%;" markdown="span"><strong>Figure 6.</strong> Self-teacher uncertainty verbalization against student pass@k on AIME24. Students distilled on DeepMath at 8k token budget for both self-teacher and student. Every point is one choice of PI at the mean CoT epistemic marker count of the self-teacher it was distilled from.</figcaption>
 </figure>
 
-[Figure 6](#fig-6) shows the opposite trend of [Figure 3](#fig-3) (note that the x-axis is inverted in [Figure 3](#fig-3)). Rising self-teacher uncertainty verbalization seems to be related to higher student pass@k. Hint PI leads to the highest student pass@k with the hint conditioned self-teacher being closest to the student in terms of uncertainty verbalization. Distilling from highly confident (in terms of verbalization) teachers should also lead to more confident students. We could measure uncertainty verbalization in the student as well but this can also be seen in the student response lengths on training data : 
+[Figure 6](#fig-6) shows the opposite trend of [Figure 3](#fig-3) (note that the x-axis is inverted in [Figure 3](#fig-3)). Rising self-teacher uncertainty verbalization seems to be related to higher student pass@k. Hint PI leads to the highest student pass@k with the hint conditioned self-teacher being closest to the student in terms of uncertainty verbalization. Distilling from highly confident (in terms of verbalization) teachers could also lead to more (perhaps incorrectly) confident students. We could measure uncertainty verbalization in the student as well but this can also be seen in the student response lengths on training data : 
 
 <figure id="fig-7">
   <a href="/images/advantage_response_length.png" title="Open full size" style="width: 100%;">
@@ -221,6 +221,7 @@ roughly tells us how much the trained model is shifting away from the base model
   <figcaption style="width: 100%;" markdown="span"><strong>Figure 8.</strong> Mean self-teacher advantage per checkpoint across training. Left : drift from the base model, $$A^{none}(o)$$ from equation (8). Right : self-teacher signal, $$\overline{A}(o)$$ from equation (7).</figcaption>
 </figure>
 
+[Figure 8](#fig-8) suggests that training under hint and answer conditioned self-teachers shifts the model the *least* from its initial per-token distributions. Their self-teacher signals are also weaker than the full and rollout PIs. Intuitively this should be desirable for thinking models. They've already undergone RLVR post-training and perhaps their distributions do not need to be rapidly altered. This is reflected in the AIME24 results in [Figure 5](#fig-5).
 
 
 
