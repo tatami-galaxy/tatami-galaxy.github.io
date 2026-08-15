@@ -191,6 +191,13 @@ $$
 $$A^{none}(o)$$ 
 roughly tells us how much the trained model is shifting away from the base model in terms of the average next-token distribution.
 
+<figure id="fig-7">
+  <a href="/images/advantage_signal_vs_drift.png" title="Open full size" style="width: 100%;">
+  <img src="/images/advantage_signal_vs_drift.png" alt="Four panels arranged as two rows, one per model, and two columns. The left column plots drift from the base model against training step, the right column plots the self-teacher signal, both for the hint, answer, rollout and full PIs.">
+  </a>
+  <figcaption style="width: 100%;" markdown="span"><strong>Figure 7.</strong> Mean self-teacher advantage per checkpoint across training. Left : drift from the base model, $$A^{none}(o)$$ from equation (8). Right : self-teacher signal, $$\overline{A}(o)$$ from equation (7).</figcaption>
+</figure>
+
 
 
 
