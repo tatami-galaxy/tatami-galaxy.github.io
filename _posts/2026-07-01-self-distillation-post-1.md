@@ -177,93 +177,19 @@ If we take the negative, this is simply the OPSD advantage in equation (5) avera
 $$
 \overline{A}(o)
 = \frac{1}{T}\sum_{t=1}^{T}\log\frac{\pi(o_t\mid q,c,o_{<t})}{\pi_\theta(o_t\mid q,o_{<t})}
-= \frac{1}{T}\sum_{t=1}^{T}\hat{A}_t .
 \tag{7}
 $$
 
-Let's measure $$\overline{A}(o)$$ across training checkpoints : 
-
-
-
-
-
-
-
-For each checkpoint step, fresh rollouts are sampled from that checkpoint’s student model using only the original problem. The identical rollout tokens are then scored in two teacher conditions.
-
-### `answer`
-
-This is the matched PI measurement for the `deepmath_answer` training run. For every sampled token:
+Let's measure $$\overline{A}(o)$$ across training checkpoints. This will give us an indication of how strong the self-teacher signal is across checkpoints. Lets also measure : 
 
 $$
-A_t^{\text{answer}}
-=
-\log p_{\text{base}}(y_t \mid x,\text{reference answer},y_{<t})
--
-\log p_{\text{checkpoint}}(y_t \mid x,y_{<t})
+A^{none}(o)
+= \frac{1}{T}\sum_{t=1}^{T}\log\frac{\pi_{base}(o_t\mid q,o_{<t})}{\pi_\theta(o_t\mid q,o_{<t})}
+\tag{8}
 $$
 
-The frozen base model sees the reference answer as privileged information. The student did not see it when generating the rollout.
-
-Its token-weighted mean estimates:
-
-$$
--\mathrm{KL}\!\left(
-p_{\text{checkpoint}}(\cdot\mid x,y_{<t})
-\;\|\;
-p_{\text{base}}(\cdot\mid x,\text{answer},y_{<t})
-\right)
-$$
-
-Thus, less negative means the checkpoint is closer to the answer-conditioned self-teacher.
-
-### `none`
-
-This is the unconditioned base-model control:
-
-$$
-A_t^{\text{none}}
-=
-\log p_{\text{base}}(y_t \mid x,y_{<t})
--
-\log p_{\text{checkpoint}}(y_t \mid x,y_{<t})
-$$
-
-Neither the student nor the frozen base teacher sees PI. Its mean estimates the negative reverse KL from the checkpoint to the original base model:
-
-$$
--\mathrm{KL}\!\left(
-p_{\text{checkpoint}}(\cdot\mid x,y_{<t})
-\;\|\;
-p_{\text{base}}(\cdot\mid x,y_{<t})
-\right)
-$$
-
-At step 0, the student and unconditioned base teacher are the same model with the same prompt, so the `none` advantage is zero. At later steps, it measures how far training has moved the student away from the base model.
-
-Importantly:
-
-- `answer` does not mean “correct rollouts.”
-- `none` does not mean “incorrect rollouts.”
-- Correct/incorrect subsets are under each mode’s `by_outcome` field.
-- Both modes score exactly the same student rollouts.
-
-Their difference,
-
-$$
-A_t^{\text{answer}}-A_t^{\text{none}}
-=
-\log p_{\text{base}}(y_t\mid x,\text{answer},y_{<t})
--
-\log p_{\text{base}}(y_t\mid x,y_{<t}),
-$$
-
-measures how much supplying the answer changes the frozen teacher’s support for the checkpoint’s sampled token. The student log-probability cancels.
-
-
-
-
-
+$$A^{none}(o)$$ 
+roughly tells us how much the trained model is shifting away from the base model in terms of the average next-token distribution.
 
 
 
