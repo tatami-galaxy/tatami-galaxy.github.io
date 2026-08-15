@@ -133,6 +133,8 @@ The rollout PI again has an interesting behavior if we contrast it with the full
   <figcaption style="width: 100%;" markdown="span"><strong>Figure 6.</strong> Mean response lengths for student rollouts for each training PI. 128 problems and 8 samples per checkpoint.</figcaption>
 </figure>
 
+As expected [Figure 6](#fig-6) shows response length collapse for full and rollout PI trained models. 
+
 
 
 ### What have we learned so far?
@@ -191,7 +193,7 @@ $$
 $$A^{none}(o)$$ 
 roughly tells us how much the trained model is shifting away from the base model in terms of the average next-token distribution.
 
-<figure id="fig-7">
+<figure id="fig-7" style="width: 130%; max-width: none; margin-left: -5.5%;">
   <a href="/images/advantage_signal_vs_drift.png" title="Open full size" style="width: 100%;">
   <img src="/images/advantage_signal_vs_drift.png" alt="Four panels arranged as two rows, one per model, and two columns. The left column plots drift from the base model against training step, the right column plots the self-teacher signal, both for the hint, answer, rollout and full PIs.">
   </a>
