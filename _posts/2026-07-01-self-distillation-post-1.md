@@ -127,8 +127,8 @@ The rollout PI again has an interesting behavior if we contrast it with the full
 [Figure 5](#fig-5) shows the opposite trend of [Figure 2](#fig-2) (note that the x-axis is inverted in [Figure 2](#fig-2)). Rising self-teacher uncertainty verbalization seems to be related to higher student pass@k. Hint PI leads to the highest student pass@k with the hint conditioned self-teacher being closest to the student in terms of uncertainty verbalization. Distilling from highly confident (in terms of verbalization) teachers should also lead to more confident students. We could measure uncertainty verbalization in the student as well but this can also be seen in the student response lengths on training data : 
 
 <figure id="fig-6">
-  <a href="/images/student_response_length.png" title="Open full size" style="width: 100%;">
-  <img src="/images/student_response_length.png" alt="Two panels, one per model, plotting mean student response length in tokens against training step for the hint, answer, rollout and full PIs.">
+  <a href="/images/advantage_response_length.png" title="Open full size" style="width: 100%;">
+  <img src="/images/advantage_response_length.png" alt="Two panels, one per model, plotting mean student response length in tokens against training step for the hint, answer, rollout and full PIs.">
   </a>
   <figcaption style="width: 100%;" markdown="span"><strong>Figure 6.</strong> Mean response lengths for student rollouts for each training PI. 128 problems and 8 samples per checkpoint.</figcaption>
 </figure>
