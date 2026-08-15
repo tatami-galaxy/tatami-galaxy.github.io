@@ -89,7 +89,7 @@ Its hard to precisely define exploration of an LLM's chain-of-thought (COT) but 
   <figcaption style="width: 100%;" markdown="span"><strong>Figure 2.</strong> Verbalized uncertainty against pass@8 accuracy for Qwen3-1.7B and Qwen3-4B on 128 DeepMath problems[^dropped-problem] under different PIs -> none: no PI, hint: a self generated hint from a correct demonstration, answer: the correct final answer, rollout: a self generated rollout which may be correct or incorrect, full: a full demonstration. Epistemic marker set is same as Kim et. al [[23]](#ref-23) </figcaption>
 </figure>
 
-[Figure 2](#fig-2) suggests that as we make the PI progressively more informative about the problem, uncertainty verbalization decreases. Its somewhat interesting what happens when we use an *unverified* rollout as PI. Its simply a self-generated rollout for the same prompt which may or may not be the correct solution. Lets measure how it affects pass@k at different token budgets when the rollout is correct vs when it is incorrect : 
+[Figure 2](#fig-2) suggests that as we make the PI progressively more informative about the problem, uncertainty verbalization decreases. Its somewhat interesting what happens when we use an *unverified* rollout as PI. Its simply a self-generated rollout for the same prompt which may or may not be the correct solution [^self-rollout]. Lets measure how it affects pass@k at different token budgets when the rollout is correct vs when it is incorrect : 
 
 <figure id="fig-3" style="width: 130%; max-width: none; margin-left: -5.5%;">
   <a href="/images/rollout_pi_stratified.png" title="Open full size" style="width: 100%;">
@@ -102,7 +102,7 @@ Its hard to precisely define exploration of an LLM's chain-of-thought (COT) but 
 
 All of the above is for uncertainty verbalization. What about other exploratory behaviors like search and self-correction? 
 
-[other self-teacher exploration behaviors]
+[other self-teacher exploration behaviors : 4 behaviors from Cognitive Behaviors that Enable Self-Improving Reasoners]
 
 What happens when we distill from these self-teachers? Does higher training set pass@k in the self-teacher translate to higher out-of-distribution pass@k in the student? Is there a relationship between uncertainty verbalization in the self-teacher with student accuracy?
 
@@ -124,7 +124,16 @@ The rollout PI again has an interesting behavior if we contrast it with the full
   <figcaption style="width: 100%;" markdown="span"><strong>Figure 5.</strong> Self-teacher uncertainty verbalization against student pass@k on AIME24. Students distilled on DeepMath at 8k token budget for both self-teacher and student. Every point is one choice of PI at the mean CoT epistemic marker count of the self-teacher it was distilled from.</figcaption>
 </figure>
 
-[Figure 5](#fig-5) shows the opposite trend of [Figure 2](#fig-2) (note that the x-axis is inverted in [Figure 2](#fig-2)). Rising self-teacher uncertainty verbalization seems to be related to higher student pass@k. Hint PI leads to the highest student pass@k with the hint conditioned self-teacher being closest to the student in terms of uncertainty verbalization. 
+[Figure 5](#fig-5) shows the opposite trend of [Figure 2](#fig-2) (note that the x-axis is inverted in [Figure 2](#fig-2)). Rising self-teacher uncertainty verbalization seems to be related to higher student pass@k. Hint PI leads to the highest student pass@k with the hint conditioned self-teacher being closest to the student in terms of uncertainty verbalization. Distilling from highly confident (in terms of verbalization) teachers should also lead to more confident students. We could measure uncertainty verbalization in the student as well but this can also be seen in the student response lengths on training data : 
+
+<figure id="fig-6">
+  <a href="/images/student_response_length.png" title="Open full size" style="width: 100%;">
+  <img src="/images/student_response_length.png" alt="Two panels, one per model, plotting mean student response length in tokens against training step for the hint, answer, rollout and full PIs.">
+  </a>
+  <figcaption style="width: 100%;" markdown="span"><strong>Figure 6.</strong> Mean response lengths for student rollouts for each training PI. 128 problems and 8 samples per checkpoint.</figcaption>
+</figure>
+
+
 
 ### What have we learned so far?
 
@@ -139,9 +148,9 @@ Our experiments so far suggest a few things which we list below :
 **2. The self-teacher needs to preserve uncertainty verbalization :**
 
   - A more informative PI tends to reduce uncertainty verbalization in the self-teacher
-  - Distilling from highly confident (in terms of verbalization) teachers is detrimental
+  - Distilling from highly confident teachers is detrimental
 
-**3. An 'on-policy' PI is better than an 'off-policy' PI :**
+**3. A self-generated PI is better than an off-policy PI :**
 
   - Even unverified but self-generated rollouts as PI is less destructive to the student compared to correct full solution PIs from a stronger but different model 
   - The best performing PI is the hint PI which is student generated
@@ -176,15 +185,100 @@ Let's measure $$\overline{A}(o)$$ across training checkpoints :
 
 
 
+
+
+
+
+For each checkpoint step, fresh rollouts are sampled from that checkpoint’s student model using only the original problem. The identical rollout tokens are then scored in two teacher conditions.
+
+### `answer`
+
+This is the matched PI measurement for the `deepmath_answer` training run. For every sampled token:
+
+$$
+A_t^{\text{answer}}
+=
+\log p_{\text{base}}(y_t \mid x,\text{reference answer},y_{<t})
+-
+\log p_{\text{checkpoint}}(y_t \mid x,y_{<t})
+$$
+
+The frozen base model sees the reference answer as privileged information. The student did not see it when generating the rollout.
+
+Its token-weighted mean estimates:
+
+$$
+-\mathrm{KL}\!\left(
+p_{\text{checkpoint}}(\cdot\mid x,y_{<t})
+\;\|\;
+p_{\text{base}}(\cdot\mid x,\text{answer},y_{<t})
+\right)
+$$
+
+Thus, less negative means the checkpoint is closer to the answer-conditioned self-teacher.
+
+### `none`
+
+This is the unconditioned base-model control:
+
+$$
+A_t^{\text{none}}
+=
+\log p_{\text{base}}(y_t \mid x,y_{<t})
+-
+\log p_{\text{checkpoint}}(y_t \mid x,y_{<t})
+$$
+
+Neither the student nor the frozen base teacher sees PI. Its mean estimates the negative reverse KL from the checkpoint to the original base model:
+
+$$
+-\mathrm{KL}\!\left(
+p_{\text{checkpoint}}(\cdot\mid x,y_{<t})
+\;\|\;
+p_{\text{base}}(\cdot\mid x,y_{<t})
+\right)
+$$
+
+At step 0, the student and unconditioned base teacher are the same model with the same prompt, so the `none` advantage is zero. At later steps, it measures how far training has moved the student away from the base model.
+
+Importantly:
+
+- `answer` does not mean “correct rollouts.”
+- `none` does not mean “incorrect rollouts.”
+- Correct/incorrect subsets are under each mode’s `by_outcome` field.
+- Both modes score exactly the same student rollouts.
+
+Their difference,
+
+$$
+A_t^{\text{answer}}-A_t^{\text{none}}
+=
+\log p_{\text{base}}(y_t\mid x,\text{answer},y_{<t})
+-
+\log p_{\text{base}}(y_t\mid x,y_{<t}),
+$$
+
+measures how much supplying the answer changes the frozen teacher’s support for the checkpoint’s sampled token. The student log-probability cancels.
+
+
+
+
+
+
+
+
+
 [^critique]: The self-teacher is trying to solve the problem from each student prefix. Given this objective, its next-token distribution over that token position is the 'critique' of that token.
 
-[^why-training]: We primarily care about how the self-teacher behaves on training data. The self-teacher is absent at test-time. For the student performance we will always look at OOD benchmarks and not training data.
+[^why-training]: We primarily care about how the self-teacher behaves on training data. The self-teacher is absent at test-time. For the student performance we will primarily look at OOD benchmarks.
 
 [^dropped-problem]: 1 problem is dropped for Qwen3-4B because the full PI exceeds max model len.
 
 [^useful]: By useful we only mean information that helps to reach the correct final answer. Here we don't measure or verify model reasoning.
 
 [^qual-indicators]: For example we can't ask the student to simply "generate a better hint". We also probably should not optimize the self-teacher to verbalize more uncertainty as this is a very hackable objective. 
+
+[^self-rollout]: The rollout PI is a *distinct* student rollout to the same prompt. Can the self-teacher better critique the rollout if the same rollout itself is PI? In theory this allows the teacher to view the completion from any arbitrary prefix. In our experiments we find that using the rollout itself as PI completely collapses training. Feng et al. [[29]](#ref-29) also report that simply using the completed rollout as PI is not useful, the self-teacher need to be 'adapted'. We discuss more about self-teacher training later in this post.
 
 
 
@@ -219,3 +313,4 @@ Let's measure $$\overline{A}(o)$$ across training checkpoints :
 26. <a id="ref-26"></a>Hugging Face H4 (2024). [*AIME 2024*](https://huggingface.co/datasets/HuggingFaceH4/aime_2024). Hugging Face Datasets. The 30 problems of AIME 2024 I and II, derived from [AI-MO/aimo-validation-aime](https://huggingface.co/datasets/AI-MO/aimo-validation-aime).
 27. <a id="ref-27"></a>Nicolicioiu, A. L., Pezeshki, M., & Courville, A. (2026). [*On-Policy Self-Distillation with Sampled Demonstrations Reduces Output Diversity*](https://arxiv.org/abs/2606.26091). arXiv:2606.26091.
 28. <a id="ref-28"></a>Cho, J. H., & Hariharan, B. (2019). [*On the Efficacy of Knowledge Distillation*](https://arxiv.org/abs/1910.01348). IEEE/CVF International Conference on Computer Vision.
+29. <a id="ref-29"></a>Feng, Y., Feng, Z., & Chen, J. (2026). [*PAST: Privileged Adaptation from Complete Student Trajectories for On-Policy Self-Distillation*](https://arxiv.org/abs/2608.08726). arXiv:2608.08726.
