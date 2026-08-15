@@ -183,8 +183,6 @@ Our experiments so far suggest a few things which we list below :
 
 Claim 3 seems intuitive but we haven't uncovered enough evidence it its favour. Current observations seem to suggest that a self-generated PI might be preferable to one from a different distribution. Nicolicioiu et al. [[27]](#ref-27) argue in favor of this by suggesting that self-distillation might be suboptimal when the PI and the student rollout trajectories share few common patterns. However our hint PI results show that the PI can be structurally very different from the student rollout while still resulting in an effective self-teacher. Instead of the PI, perhaps it makes sense to analyze the structural and distributional similarities between the student and the PI conditioned self-teacher. After all, its the self-teacher properties that directly influence student learning and not the PI by itself, and we've already seen that self-teacher behaviors are related to student performance. The self-teacher generations are indicative but we do not actually generate from them during training. Instead its their next token distributions which serve as the token level training signal for the student. Let's try to analyze this next. 
 
-### Self-teacher vs student distributions
-
 The OPSD objective is itself an *f*-divergence between the self-teacher and the student. In our setting its the reverse KL. A simple quantity we could measure is the average reverse KL across a rollout. In our setup we train with the KL evaluated at the sampled token, not the true reverse KL over the vocabulary. Therefore it would be more faithful to average over this log ratio instead :
 
 $$
@@ -220,6 +218,8 @@ roughly tells us how much the trained model is shifting away from the base model
 </figure>
 
 [Figure 8](#fig-8) is quite revealing as it suggests that training under hint and answer conditioned self-teachers shifts the model the *least* from its initial per-token distributions. Their self-teacher signals are also weaker than the full and rollout PIs. Intuitively this should be desirable for thinking models. They've already undergone RLVR post-training and perhaps their distributions do not need to be significantly altered. This is reflected in the AIME24 results in [Figure 5](#fig-5).
+
+How to use the insights we've developed so far? Ideally we want the self-teacher to be correct, the self-teacher to preserve its student cognitive behaviors, next-token distribution to be 'close' to the student. If we want to preserve the self-distillation formulation, broadly there are two approaches we can take. We can either optimize the PI or the self-teacher.
 
 
 
