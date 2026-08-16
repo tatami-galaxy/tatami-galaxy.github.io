@@ -217,9 +217,9 @@ roughly tells us how much the trained model is shifting away from the base model
   <figcaption style="width: 100%;" markdown="span"><strong>Figure 8.</strong> Mean self-teacher advantage per checkpoint across training. Left : drift from the base model, $$A^{none}(o)$$ from equation (8). Right : self-teacher signal, $$\overline{A}(o)$$ from equation (7).</figcaption>
 </figure>
 
-[Figure 8](#fig-8) is quite revealing as it suggests that training under hint and answer conditioned self-teachers shifts the model the *least* from its initial per-token distributions. Their self-teacher signals are also weaker than the full and rollout PIs. Intuitively this should be desirable for thinking models. They've already undergone RLVR post-training and perhaps their distributions do not need to be significantly altered. This is reflected in the AIME24 results in [Figure 5](#fig-5).
+[Figure 8](#fig-8) is quite revealing as it suggests that training under hint and answer conditioned self-teachers shifts the model the *least* from its initial per-token distributions. Their self-teacher signals are also weaker than the full and rollout PIs. Intuitively this should be desirable for thinking models. They've already undergone RLVR post-training and perhaps their distributions do not need to be significantly altered. This is reflected in the AIME24 results in [Figure 5](#fig-5). This also matches the minimal deviation requirement in Shenfeld et. al. [[19]](#ref-19) where they find that the demonstration conditioned self-teacher is closer to the student in a KL sense compared to an SFT trained model.  
 
-How to use the insights we've developed so far? Ideally we want the self-teacher to be correct, the self-teacher to preserve its student cognitive behaviors, next-token distribution to be 'close' to the student. If we want to preserve the self-distillation formulation, broadly there are two approaches we can take. We can either optimize the PI or the self-teacher.
+How to use the insights we've developed so far? Ideally we want the self-teacher to be correct, to preserve its cognitive behaviors and its next-token distribution to be close to the student. If we want to preserve the self-distillation formulation, broadly there are two approaches we can take. We can either optimize the PI or the self-teacher.
 
 
 
