@@ -219,7 +219,7 @@ roughly tells us how much the trained model is shifting away from the base model
 
 [Figure 8](#fig-8) is quite revealing as it suggests that training under hint and answer conditioned self-teachers shifts the model the *least* from its initial per-token distributions. Their self-teacher signals are also weaker than the full and rollout PIs. Intuitively this should be desirable for thinking models. They've already undergone RLVR post-training and perhaps their distributions do not need to be significantly altered. This is reflected in the AIME24 results in [Figure 5](#fig-5). This also matches the minimal deviation requirement in Shenfeld et. al. [[19]](#ref-19) where they find that the demonstration conditioned self-teacher is closer to the student in a KL sense compared to an SFT trained model.  
 
-How to use the insights we've developed so far? Ideally we want the self-teacher to be correct, to preserve its cognitive behaviors and its next-token distribution to be close to the student. If we want to preserve the self-distillation formulation, broadly there are two approaches we can take. We can either optimize the PI or the self-teacher. Lets first think about optimizing the PI.
+How to use the insights we've developed so far? Ideally we want the self-teacher to be correct, to preserve its cognitive behaviors and its next-token distribution to be close to the student. If we want to preserve the self-distillation formulation, broadly there are two approaches we can take. We can either optimize the PI to induce a more helpful (for the student) self-teacher distribution, or we can optimize the self-teacher to be able to better utilize the given PI. 
 
 
 ## Hint Generation
@@ -230,7 +230,7 @@ Its clear from our experiments that using a self-generated hint as the PI is the
 - Compression: The hint contains as little reasoning or process level information as possible
 - Transferability: The behavioral change induced by the hint is 'easy' for the student to learn
 
-We can see from [Figure 3](#fig-3) that the hinted teacher already has a higher pass@k than the student. If we optimize the hint we would like it to induce a pass@k that's at least as good and ideally better. Let the sufficiency $$S(h)$$ be the fraction of teacher rollouts that succeed. A simple, crude measure of compression $$C(h)$$could be the number of hint tokens. We could later try to come up with better notions of a 'minimal hint'. We already have a measure of PI transferability $$T(h)$$ which seems to correlate with PI effectiveness and that is $$\overline{A}(o)$$. Its the strength of the self-teacher signal or in other words, how strongly the self-teacher tries to shift the student's next-token distribution on average. This gives us a constrained optimization problem to solve : 
+We can see from [Figure 3](#fig-3) that the hinted teacher already has a higher pass@k than the student. If we optimize the hint we would like it to induce a pass@k that's at least as good and ideally better. Let sufficiency $$S(h)$$ be the fraction of teacher rollouts that succeed. A simple, crude measure of compression $$C(h)$$could be the number of hint tokens. We could later try to come up with better notions of a 'minimal hint'. We already have a measure of PI transferability $$T(h)$$ which seems to correlate with PI effectiveness and that is $$\overline{A}(o)$$. Its the strength of the self-teacher signal or in other words, how strongly the self-teacher tries to shift the student's next-token distribution on average. This gives us a constrained optimization problem to solve : 
 
 $$
 \min_\phi\;
@@ -243,13 +243,7 @@ C(h)+\gamma\,T(h)
 S(h)\ge \tau,
 $$
 
-where $$\tau$$ is the required self-teacher accuracy for example 0.8. 
-
-
-
-
-
-
+where $$\tau$$ is the required self-teacher accuracy for example 0.7. 
 
 
 
