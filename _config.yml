@@ -180,6 +180,7 @@ exclude:
   - Rakefile
   - README
   - tmp
+  - todo.md
   - vendor
 keep_files:
   - .git
