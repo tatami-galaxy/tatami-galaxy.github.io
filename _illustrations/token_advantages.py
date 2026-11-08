@@ -41,7 +41,7 @@ def label(x, y, text, size=18, fill="#53616b", extra=""):
 
 
 def main():
-    x, y = MARGIN, 176
+    x, y = MARGIN, 57
     shapes = []
     for index, (token, value) in enumerate(zip(TOKENS, VALUES)):
         width = len(token) * CHAR
@@ -57,26 +57,16 @@ def main():
         )
         x += width
 
-    legend_y = y + 64
-    height = legend_y + 116
+    caption_y = y + 66
+    height = caption_y + 32
     svg = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{WIDTH}" height="{height}" viewBox="0 0 {WIDTH} {height}" role="img" aria-labelledby="title desc">',
         '<title id="title">Token-level advantages: one token, one action</title>',
         '<desc id="desc">A sample response about a train travelling 120 kilometres in two hours. Each illustrative token has a synthetic signed advantage. Coral is negative, off-white is zero, and green is positive. Values do not come from a training run.</desc>',
         f'<rect width="{WIDTH}" height="{height}" fill="white"/>',
         '<g font-family="Arial, Helvetica, sans-serif">',
-        label(MARGIN, 51, "One token, one action", 30, "#172b36", 'font-weight="600"'),
-        label(MARGIN, 85, "A separate advantage for each generated token", 20),
-        f'<path d="M{MARGIN} 112 H{WIDTH-MARGIN}" stroke="#dce3e6"/>',
         *shapes,
-        label(MARGIN, legend_y + 17, "Advantage", 18, "#172b36"),
-        '<defs><linearGradient id="scale"><stop offset="0" stop-color="'+color(-1)+'"/><stop offset="0.5" stop-color="'+color(0)+'"/><stop offset="1" stop-color="'+color(1)+'"/></linearGradient></defs>',
-        f'<rect x="180" y="{legend_y}" width="330" height="20" rx="3" fill="url(#scale)"/>',
-        label(180, legend_y + 44, "−1", 16),
-        label(345, legend_y + 44, "0", 16, extra='text-anchor="middle"'),
-        label(510, legend_y + 44, "+1", 16, extra='text-anchor="end"'),
-        label(560, legend_y + 17, "Negative  ←  zero  →  positive", 18),
-        label(MARGIN, height - 26, "Schematic · synthetic advantages · illustrative token boundaries", 17),
+        label(WIDTH / 2, caption_y, "Each token is an action", 22, "#172b36", 'text-anchor="middle"'),
         '</g></svg>',
     ]
     OUT.parent.mkdir(parents=True, exist_ok=True)
