@@ -23,10 +23,11 @@ Reinforcement learning and espeically policy gradient based methods are widely u
 - Objective on the final response, iteratively refined during COT
 
 
-
-
 - Lean use within COT, NLAC, SFT first from stronger model
 
 - Objective for 'good' COT
 
 - Edit context during rollout
+
+- AR vs diffusion, critic vs grpo -> linguistics
+

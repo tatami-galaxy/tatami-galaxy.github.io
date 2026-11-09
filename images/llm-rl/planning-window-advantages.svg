@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="339" viewBox="0 0 1100 339" role="img" aria-labelledby="title desc">
+<title id="title">Each planning window is an action</title>
+<desc id="desc">The same sample response as the token-level advantage figure, now grouped into eight variable-length planning windows of 8, 11, 9, 13, 6, 15, 7, and 12 tokens. Each window shares one advantage color, with continuous highlighting within each line. Matching colors continue windows across line breaks. Window boundaries and advantage values are illustrative, not learned.</desc>
+<rect width="1100" height="339" fill="white"/>
+<g font-family="Arial, Helvetica, sans-serif">
+<g data-window="1"><title>Action 1: 8 tokens; illustrative shared advantage -0.18</title><rect x="48.0" y="32" width="407.2" height="34" rx="3" fill="#f5e6e0"/></g>
+<g data-window="2"><title>Action 2: 11 tokens; illustrative shared advantage +0.30</title><rect x="457.2" y="32" width="460.0" height="34" rx="3" fill="#cfe7dd"/></g>
+<g data-window="3"><title>Action 3: 9 tokens; illustrative shared advantage +0.55</title><rect x="919.2" y="32" width="50.8" height="34" rx="3" fill="#add8ca"/></g>
+<g data-window="3"><title>Action 3: 9 tokens; illustrative shared advantage +0.55</title><rect x="48.0" y="78" width="565.6" height="34" rx="3" fill="#add8ca"/></g>
+<g data-window="4"><title>Action 4: 13 tokens; illustrative shared advantage +0.82</title><rect x="615.6" y="78" width="433.6" height="34" rx="3" fill="#88c8b4"/></g>
+<g data-window="5"><title>Action 5: 6 tokens; illustrative shared advantage -0.12</title><rect x="48.0" y="124" width="275.2" height="34" rx="3" fill="#f6ece7"/></g>
+<g data-window="6"><title>Action 6: 15 tokens; illustrative shared advantage +0.67</title><rect x="325.2" y="124" width="697.6" height="34" rx="3" fill="#9dd1c0"/></g>
+<g data-window="6"><title>Action 6: 15 tokens; illustrative shared advantage +0.67</title><rect x="48.0" y="170" width="50.8" height="34" rx="3" fill="#9dd1c0"/></g>
+<g data-window="7"><title>Action 7: 7 tokens; illustrative shared advantage +0.25</title><rect x="100.8" y="170" width="486.4" height="34" rx="3" fill="#d6eae1"/></g>
+<g data-window="8"><title>Action 8: 12 tokens; illustrative shared advantage +0.90</title><rect x="589.2" y="170" width="460.0" height="34" rx="3" fill="#7ec4ae"/></g>
+<g data-window="8"><title>Action 8: 12 tokens; illustrative shared advantage +0.90</title><rect x="48.0" y="216" width="77.2" height="34" rx="3" fill="#7ec4ae"/></g>
+<text x="48.0" y="57" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="39.6" lengthAdjust="spacingAndGlyphs">Let</text>
+<text x="87.6" y="57" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="39.6" lengthAdjust="spacingAndGlyphs"> us</text>
+<text x="127.2" y="57" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="79.2" lengthAdjust="spacingAndGlyphs"> solve</text>
+<text x="206.4" y="57" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="66.0" lengthAdjust="spacingAndGlyphs"> this</text>
+<text x="272.4" y="57" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="66.0" lengthAdjust="spacingAndGlyphs"> step</text>
+<text x="338.4" y="57" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="39.6" lengthAdjust="spacingAndGlyphs"> by</text>
+<text x="378.0" y="57" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="66.0" lengthAdjust="spacingAndGlyphs"> step</text>
+<text x="444.0" y="57" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="13.2" lengthAdjust="spacingAndGlyphs">.</text>
+<text x="457.2" y="57" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="26.4" lengthAdjust="spacingAndGlyphs"> A</text>
+<text x="483.6" y="57" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="79.2" lengthAdjust="spacingAndGlyphs"> train</text>
+<text x="562.8" y="57" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="105.6" lengthAdjust="spacingAndGlyphs"> travels</text>
+<text x="668.4" y="57" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="13.2" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="681.6" y="57" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="39.6" lengthAdjust="spacingAndGlyphs">120</text>
+<text x="721.2" y="57" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="39.6" lengthAdjust="spacingAndGlyphs"> km</text>
+<text x="760.8" y="57" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="39.6" lengthAdjust="spacingAndGlyphs"> in</text>
+<text x="800.4" y="57" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="13.2" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="813.6" y="57" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="13.2" lengthAdjust="spacingAndGlyphs">2</text>
+<text x="826.8" y="57" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="79.2" lengthAdjust="spacingAndGlyphs"> hours</text>
+<text x="906.0" y="57" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="13.2" lengthAdjust="spacingAndGlyphs">.</text>
+<text x="919.2" y="57" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="52.8" lengthAdjust="spacingAndGlyphs"> Its</text>
+<text x="48.0" y="103" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="105.6" lengthAdjust="spacingAndGlyphs"> average</text>
+<text x="153.6" y="103" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="79.2" lengthAdjust="spacingAndGlyphs"> speed</text>
+<text x="232.8" y="103" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="39.6" lengthAdjust="spacingAndGlyphs"> is</text>
+<text x="272.4" y="103" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="118.8" lengthAdjust="spacingAndGlyphs"> distance</text>
+<text x="391.2" y="103" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="105.6" lengthAdjust="spacingAndGlyphs"> divided</text>
+<text x="496.8" y="103" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="39.6" lengthAdjust="spacingAndGlyphs"> by</text>
+<text x="536.4" y="103" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="66.0" lengthAdjust="spacingAndGlyphs"> time</text>
+<text x="602.4" y="103" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="13.2" lengthAdjust="spacingAndGlyphs">.</text>
+<text x="615.6" y="103" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="39.6" lengthAdjust="spacingAndGlyphs"> So</text>
+<text x="655.2" y="103" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="39.6" lengthAdjust="spacingAndGlyphs"> we</text>
+<text x="694.8" y="103" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="105.6" lengthAdjust="spacingAndGlyphs"> compute</text>
+<text x="800.4" y="103" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="13.2" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="813.6" y="103" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="39.6" lengthAdjust="spacingAndGlyphs">120</text>
+<text x="853.2" y="103" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="26.4" lengthAdjust="spacingAndGlyphs"> /</text>
+<text x="879.6" y="103" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="26.4" lengthAdjust="spacingAndGlyphs"> 2</text>
+<text x="906.0" y="103" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="26.4" lengthAdjust="spacingAndGlyphs"> =</text>
+<text x="932.4" y="103" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="39.6" lengthAdjust="spacingAndGlyphs"> 60</text>
+<text x="972.0" y="103" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="39.6" lengthAdjust="spacingAndGlyphs"> km</text>
+<text x="1011.6" y="103" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="13.2" lengthAdjust="spacingAndGlyphs">/</text>
+<text x="1024.8" y="103" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="13.2" lengthAdjust="spacingAndGlyphs">h</text>
+<text x="1038.0" y="103" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="13.2" lengthAdjust="spacingAndGlyphs">.</text>
+<text x="48.0" y="149" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="13.2" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="61.2" y="149" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="26.4" lengthAdjust="spacingAndGlyphs">To</text>
+<text x="87.6" y="149" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="79.2" lengthAdjust="spacingAndGlyphs"> check</text>
+<text x="166.8" y="149" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="52.8" lengthAdjust="spacingAndGlyphs"> the</text>
+<text x="219.6" y="149" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="92.4" lengthAdjust="spacingAndGlyphs"> result</text>
+<text x="312.0" y="149" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="13.2" lengthAdjust="spacingAndGlyphs">,</text>
+<text x="325.2" y="149" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="118.8" lengthAdjust="spacingAndGlyphs"> multiply</text>
+<text x="444.0" y="149" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="52.8" lengthAdjust="spacingAndGlyphs"> the</text>
+<text x="496.8" y="149" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="79.2" lengthAdjust="spacingAndGlyphs"> speed</text>
+<text x="576.0" y="149" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="39.6" lengthAdjust="spacingAndGlyphs"> by</text>
+<text x="615.6" y="149" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="52.8" lengthAdjust="spacingAndGlyphs"> the</text>
+<text x="668.4" y="149" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="66.0" lengthAdjust="spacingAndGlyphs"> time</text>
+<text x="734.4" y="149" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="13.2" lengthAdjust="spacingAndGlyphs">:</text>
+<text x="747.6" y="149" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="13.2" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="760.8" y="149" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="26.4" lengthAdjust="spacingAndGlyphs">60</text>
+<text x="787.2" y="149" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="79.2" lengthAdjust="spacingAndGlyphs"> times</text>
+<text x="866.4" y="149" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="26.4" lengthAdjust="spacingAndGlyphs"> 2</text>
+<text x="892.8" y="149" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="79.2" lengthAdjust="spacingAndGlyphs"> gives</text>
+<text x="972.0" y="149" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="52.8" lengthAdjust="spacingAndGlyphs"> 120</text>
+<text x="48.0" y="195" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="39.6" lengthAdjust="spacingAndGlyphs"> km</text>
+<text x="87.6" y="195" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="13.2" lengthAdjust="spacingAndGlyphs">,</text>
+<text x="100.8" y="195" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="13.2" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="114.0" y="195" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="66.0" lengthAdjust="spacingAndGlyphs">which</text>
+<text x="180.0" y="195" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="105.6" lengthAdjust="spacingAndGlyphs"> matches</text>
+<text x="285.6" y="195" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="52.8" lengthAdjust="spacingAndGlyphs"> the</text>
+<text x="338.4" y="195" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="118.8" lengthAdjust="spacingAndGlyphs"> original</text>
+<text x="457.2" y="195" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="118.8" lengthAdjust="spacingAndGlyphs"> distance</text>
+<text x="576.0" y="195" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="13.2" lengthAdjust="spacingAndGlyphs">.</text>
+<text x="589.2" y="195" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="132.0" lengthAdjust="spacingAndGlyphs"> Therefore</text>
+<text x="721.2" y="195" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="13.2" lengthAdjust="spacingAndGlyphs">,</text>
+<text x="734.4" y="195" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="52.8" lengthAdjust="spacingAndGlyphs"> the</text>
+<text x="787.2" y="195" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="105.6" lengthAdjust="spacingAndGlyphs"> average</text>
+<text x="892.8" y="195" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="79.2" lengthAdjust="spacingAndGlyphs"> speed</text>
+<text x="972.0" y="195" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="39.6" lengthAdjust="spacingAndGlyphs"> is</text>
+<text x="1011.6" y="195" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="13.2" lengthAdjust="spacingAndGlyphs"> </text>
+<text x="1024.8" y="195" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="26.4" lengthAdjust="spacingAndGlyphs">60</text>
+<text x="48.0" y="241" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="39.6" lengthAdjust="spacingAndGlyphs"> km</text>
+<text x="87.6" y="241" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="13.2" lengthAdjust="spacingAndGlyphs">/</text>
+<text x="100.8" y="241" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="13.2" lengthAdjust="spacingAndGlyphs">h</text>
+<text x="114.0" y="241" font-size="22" fill="#172b36" font-family="monospace" xml:space="preserve" textLength="13.2" lengthAdjust="spacingAndGlyphs">.</text>
+<text x="550.0" y="307" font-size="22" fill="#172b36" text-anchor="middle">Each planning window is an action</text>
+</g></svg>
