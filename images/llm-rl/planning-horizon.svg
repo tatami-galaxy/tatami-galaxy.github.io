@@ -25,7 +25,7 @@
 <rect x="992" y="65" width="96" height="48" rx="6" fill="#f7f8f9" stroke="#b9c3ca"/>
 <text x="1040" y="96" font-size="23" fill="#63717c" text-anchor="middle" >xₜ₊₅</text>
 <path d="M 512 127 V 141 H 848 V 127" fill="none" stroke="#508a7c" stroke-width="1.5" />
-<text x="680" y="174" font-size="17" fill="#508a7c" text-anchor="middle" >Selected · high mutual information</text>
+<text x="680" y="174" font-size="17" fill="#508a7c" text-anchor="middle" >high mutual information</text>
 <path d="M 490 53 V 156" fill="none" stroke="#b9c3ca" stroke-width="1.5" stroke-dasharray="4 5"/>
 <text x="490" y="178" font-size="16" fill="#63717c" text-anchor="middle" >position t</text>
 <path d="M 64 127 V 138 H 446 V 127" fill="none" stroke="#547ba0" stroke-width="1.5" />
