@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="650" viewBox="0 0 1120 650" role="img" aria-labelledby="title desc">
+<title id="title">Shared information between prefix and future computations</title>
+<desc id="desc">A completed rollout is split at position t. Prefix activations across positions 1 through t and layers 1 through L minus 1 are compressed into one discrete code. Final-layer states at later positions t plus 1, t plus 2, and t plus k are compressed separately. Code co-occurrences across many rollouts are used to estimate mutual information. The diagram does not assign a planning horizon to an individual rollout.</desc>
+<defs><marker id="arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 8 4 L 0 8 Z" fill="#8998a3"/></marker></defs>
+<rect width="1120" height="650" fill="white"/>
+<g font-family="Arial, Helvetica, sans-serif">
+<text x="252" y="39" font-size="19" fill="#63717c" text-anchor="middle" >Prefix</text>
+<text x="796" y="39" font-size="19" fill="#63717c" text-anchor="middle" >Future continuation</text>
+<rect x="64" y="65" width="88" height="48" rx="6" fill="#edf3f8" stroke="#cfdae4"/>
+<text x="108" y="96" font-size="23" fill="#547ba0" text-anchor="middle" >x₁</text>
+<rect x="162" y="65" width="88" height="48" rx="6" fill="#edf3f8" stroke="#cfdae4"/>
+<text x="206" y="96" font-size="23" fill="#547ba0" text-anchor="middle" >…</text>
+<rect x="260" y="65" width="88" height="48" rx="6" fill="#edf3f8" stroke="#cfdae4"/>
+<text x="304" y="96" font-size="23" fill="#547ba0" text-anchor="middle" >xₜ₋₁</text>
+<rect x="358" y="65" width="88" height="48" rx="6" fill="#edf3f8" stroke="#547ba0"/>
+<text x="402" y="96" font-size="23" fill="#547ba0" text-anchor="middle" >xₜ</text>
+<rect x="562" y="65" width="96" height="48" rx="6" fill="#edf5f2" stroke="#cbded7"/>
+<text x="610" y="96" font-size="23" fill="#508a7c" text-anchor="middle" >xₜ₊₁</text>
+<rect x="742" y="65" width="96" height="48" rx="6" fill="#edf5f2" stroke="#cbded7"/>
+<text x="790" y="96" font-size="23" fill="#508a7c" text-anchor="middle" >xₜ₊₂</text>
+<rect x="952" y="65" width="96" height="48" rx="6" fill="#edf5f2" stroke="#cbded7"/>
+<text x="1000" y="96" font-size="23" fill="#508a7c" text-anchor="middle" >xₜ₊ₖ</text>
+<text x="895" y="96" font-size="23" fill="#63717c" text-anchor="middle" >…</text>
+<path d="M 490 53 V 156" fill="none" stroke="#b9c3ca" stroke-width="1.5" stroke-dasharray="4 5"/>
+<text x="490" y="178" font-size="16" fill="#63717c" text-anchor="middle" >position t</text>
+<path d="M 64 127 V 138 H 446 V 127" fill="none" stroke="#547ba0" stroke-width="1.5" />
+<path d="M 255 138 V 188" fill="none" stroke="#547ba0" stroke-width="1.5" marker-end="url(#arrow)" />
+<rect x="153" y="233" width="19" height="13" rx="2" fill="#cbdceb" stroke="none"/>
+<rect x="176" y="233" width="19" height="13" rx="2" fill="#edf3f8" stroke="none"/>
+<rect x="199" y="233" width="19" height="13" rx="2" fill="#edf3f8" stroke="none"/>
+<rect x="222" y="233" width="19" height="13" rx="2" fill="#cbdceb" stroke="none"/>
+<rect x="245" y="233" width="19" height="13" rx="2" fill="#edf3f8" stroke="none"/>
+<rect x="268" y="233" width="19" height="13" rx="2" fill="#edf3f8" stroke="none"/>
+<rect x="291" y="233" width="19" height="13" rx="2" fill="#cbdceb" stroke="none"/>
+<rect x="314" y="233" width="19" height="13" rx="2" fill="#edf3f8" stroke="none"/>
+<rect x="337" y="233" width="19" height="13" rx="2" fill="#edf3f8" stroke="none"/>
+<rect x="153" y="251" width="19" height="13" rx="2" fill="#edf3f8" stroke="none"/>
+<rect x="176" y="251" width="19" height="13" rx="2" fill="#edf3f8" stroke="none"/>
+<rect x="199" y="251" width="19" height="13" rx="2" fill="#cbdceb" stroke="none"/>
+<rect x="222" y="251" width="19" height="13" rx="2" fill="#edf3f8" stroke="none"/>
+<rect x="245" y="251" width="19" height="13" rx="2" fill="#edf3f8" stroke="none"/>
+<rect x="268" y="251" width="19" height="13" rx="2" fill="#cbdceb" stroke="none"/>
+<rect x="291" y="251" width="19" height="13" rx="2" fill="#edf3f8" stroke="none"/>
+<rect x="314" y="251" width="19" height="13" rx="2" fill="#edf3f8" stroke="none"/>
+<rect x="337" y="251" width="19" height="13" rx="2" fill="#cbdceb" stroke="none"/>
+<rect x="153" y="269" width="19" height="13" rx="2" fill="#edf3f8" stroke="none"/>
+<rect x="176" y="269" width="19" height="13" rx="2" fill="#cbdceb" stroke="none"/>
+<rect x="199" y="269" width="19" height="13" rx="2" fill="#edf3f8" stroke="none"/>
+<rect x="222" y="269" width="19" height="13" rx="2" fill="#edf3f8" stroke="none"/>
+<rect x="245" y="269" width="19" height="13" rx="2" fill="#cbdceb" stroke="none"/>
+<rect x="268" y="269" width="19" height="13" rx="2" fill="#edf3f8" stroke="none"/>
+<rect x="291" y="269" width="19" height="13" rx="2" fill="#edf3f8" stroke="none"/>
+<rect x="314" y="269" width="19" height="13" rx="2" fill="#cbdceb" stroke="none"/>
+<rect x="337" y="269" width="19" height="13" rx="2" fill="#edf3f8" stroke="none"/>
+<rect x="153" y="287" width="19" height="13" rx="2" fill="#cbdceb" stroke="none"/>
+<rect x="176" y="287" width="19" height="13" rx="2" fill="#edf3f8" stroke="none"/>
+<rect x="199" y="287" width="19" height="13" rx="2" fill="#edf3f8" stroke="none"/>
+<rect x="222" y="287" width="19" height="13" rx="2" fill="#cbdceb" stroke="none"/>
+<rect x="245" y="287" width="19" height="13" rx="2" fill="#edf3f8" stroke="none"/>
+<rect x="268" y="287" width="19" height="13" rx="2" fill="#edf3f8" stroke="none"/>
+<rect x="291" y="287" width="19" height="13" rx="2" fill="#cbdceb" stroke="none"/>
+<rect x="314" y="287" width="19" height="13" rx="2" fill="#edf3f8" stroke="none"/>
+<rect x="337" y="287" width="19" height="13" rx="2" fill="#edf3f8" stroke="none"/>
+<text x="255" y="213" font-size="19" fill="#547ba0" text-anchor="middle" >Prefix activations</text>
+<text x="255" y="319" font-size="16" fill="#63717c" text-anchor="middle" >positions ≤ t · layers &lt; L</text>
+<text x="804" y="213" font-size="19" fill="#508a7c" text-anchor="middle" >Later decision states · final layer</text>
+<path d="M 610 126 V 188" fill="none" stroke="#508a7c" stroke-width="1.5" marker-end="url(#arrow)" />
+<rect x="588" y="233" width="44" height="13" rx="2" fill="#c9e0d7" stroke="none"/>
+<rect x="588" y="251" width="44" height="13" rx="2" fill="#edf5f2" stroke="none"/>
+<rect x="588" y="269" width="44" height="13" rx="2" fill="#c9e0d7" stroke="none"/>
+<rect x="588" y="287" width="44" height="13" rx="2" fill="#edf5f2" stroke="none"/>
+<text x="610" y="319" font-size="19" fill="#508a7c" text-anchor="middle" >hₜ₊₁</text>
+<path d="M 790 126 V 188" fill="none" stroke="#508a7c" stroke-width="1.5" marker-end="url(#arrow)" />
+<rect x="768" y="233" width="44" height="13" rx="2" fill="#c9e0d7" stroke="none"/>
+<rect x="768" y="251" width="44" height="13" rx="2" fill="#edf5f2" stroke="none"/>
+<rect x="768" y="269" width="44" height="13" rx="2" fill="#c9e0d7" stroke="none"/>
+<rect x="768" y="287" width="44" height="13" rx="2" fill="#edf5f2" stroke="none"/>
+<text x="790" y="319" font-size="19" fill="#508a7c" text-anchor="middle" >hₜ₊₂</text>
+<path d="M 1000 126 V 188" fill="none" stroke="#508a7c" stroke-width="1.5" marker-end="url(#arrow)" />
+<rect x="978" y="233" width="44" height="13" rx="2" fill="#c9e0d7" stroke="none"/>
+<rect x="978" y="251" width="44" height="13" rx="2" fill="#edf5f2" stroke="none"/>
+<rect x="978" y="269" width="44" height="13" rx="2" fill="#c9e0d7" stroke="none"/>
+<rect x="978" y="287" width="44" height="13" rx="2" fill="#edf5f2" stroke="none"/>
+<text x="1000" y="319" font-size="19" fill="#508a7c" text-anchor="middle" >hₜ₊ₖ</text>
+<path d="M 255 321 V 346" fill="none" stroke="#547ba0" stroke-width="1.5" marker-end="url(#arrow)" />
+<path d="M 200 359 H 310 L 282 395 H 228 Z" fill="#edf3f8" stroke="#547ba0"/>
+<text x="255" y="381" font-size="17" fill="#547ba0" text-anchor="middle" >VQ</text>
+<path d="M 255 396 V 425" fill="none" stroke="#547ba0" stroke-width="1.5" marker-end="url(#arrow)" />
+<rect x="209" y="438" width="92" height="44" rx="6" fill="#edf3f8" stroke="#547ba0"/>
+<text x="255" y="467" font-size="21" fill="#547ba0" text-anchor="middle" >Zₚ</text>
+<path d="M 610 321 V 346" fill="none" stroke="#508a7c" stroke-width="1.5" marker-end="url(#arrow)" />
+<path d="M 555 359 H 665 L 637 395 H 583 Z" fill="#edf5f2" stroke="#508a7c"/>
+<text x="610" y="381" font-size="17" fill="#508a7c" text-anchor="middle" >VQ</text>
+<path d="M 610 396 V 425" fill="none" stroke="#508a7c" stroke-width="1.5" marker-end="url(#arrow)" />
+<rect x="564" y="438" width="92" height="44" rx="6" fill="#edf5f2" stroke="#508a7c"/>
+<text x="610" y="467" font-size="21" fill="#508a7c" text-anchor="middle" >Z₁</text>
+<path d="M 790 321 V 346" fill="none" stroke="#508a7c" stroke-width="1.5" marker-end="url(#arrow)" />
+<path d="M 735 359 H 845 L 817 395 H 763 Z" fill="#edf5f2" stroke="#508a7c"/>
+<text x="790" y="381" font-size="17" fill="#508a7c" text-anchor="middle" >VQ</text>
+<path d="M 790 396 V 425" fill="none" stroke="#508a7c" stroke-width="1.5" marker-end="url(#arrow)" />
+<rect x="744" y="438" width="92" height="44" rx="6" fill="#edf5f2" stroke="#508a7c"/>
+<text x="790" y="467" font-size="21" fill="#508a7c" text-anchor="middle" >Z₂</text>
+<path d="M 1000 321 V 346" fill="none" stroke="#508a7c" stroke-width="1.5" marker-end="url(#arrow)" />
+<path d="M 945 359 H 1055 L 1027 395 H 973 Z" fill="#edf5f2" stroke="#508a7c"/>
+<text x="1000" y="381" font-size="17" fill="#508a7c" text-anchor="middle" >VQ</text>
+<path d="M 1000 396 V 425" fill="none" stroke="#508a7c" stroke-width="1.5" marker-end="url(#arrow)" />
+<rect x="954" y="438" width="92" height="44" rx="6" fill="#edf5f2" stroke="#508a7c"/>
+<text x="1000" y="467" font-size="21" fill="#508a7c" text-anchor="middle" >Zₖ</text>
+<text x="895" y="467" font-size="23" fill="#63717c" text-anchor="middle" >…</text>
+<path d="M 255 482 V 525 H 1000 V 482" fill="none" stroke="#b9c3ca" stroke-width="1.5" />
+<path d="M 610 482 V 525 M 790 482 V 525" fill="none" stroke="#b9c3ca" stroke-width="1.5" />
+<text x="627" y="558" font-size="20" fill="#23313b" text-anchor="middle" >Estimate shared information at each future offset</text>
+<text x="627" y="586" font-size="17" fill="#63717c" text-anchor="middle" >from code co-occurrences across many rollouts</text>
+<text x="560" y="629" font-size="21" fill="#23313b" text-anchor="middle" >How much information about future computations is already present in the prefix?</text>
+</g></svg>
