@@ -10,7 +10,7 @@ permalink: /posts/2026-11-08-changing-the-action-space-in-llm-rl/
 
 - Plan
 
-  ![Prefix activations and later final-layer states are compressed into discrete codes. Shared information is estimated from code co-occurrences across many rollouts.]({{ '/images/llm-rl/planning-horizon.svg' | relative_url }})
+  ![Prefix activations and five later states are compressed into discrete codes. The first three future tokens are highlighted as an illustrative selection based on high mutual information, estimated across many rollouts.]({{ '/images/llm-rl/planning-horizon.svg' | relative_url }})
 
 - Role of action space in discrete RL settings
 
