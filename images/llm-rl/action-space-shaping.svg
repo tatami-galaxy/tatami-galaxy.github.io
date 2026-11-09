@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="560" viewBox="0 0 1120 560" role="img" aria-labelledby="title desc">
+<title id="title">The useful action set depends on the task</title><desc id="desc">Two reported examples from Action Space Shaping in Deep Reinforcement Learning. In Obstacle Tower, allowing backward movement slowed learning. In harder Doom scenarios, expanding the available controls improved performance. The control diagrams are schematic, not complete action-space specifications.</desc>
+<defs><marker id="arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M 0 0 L 8 4 L 0 8 Z" fill="#8998a3"/></marker></defs>
+<rect width="1120" height="560" fill="white"/>
+<g font-family="Arial, Helvetica, sans-serif">
+<text x="408" y="49" font-size="20" fill="#547ba0" text-anchor="middle" >Initial controls</text>
+<text x="827" y="49" font-size="20" fill="#508a7c" text-anchor="middle" >Modified controls</text>
+<text x="52" y="128" font-size="21" fill="#23313b" text-anchor="start" >Obstacle Tower</text>
+<text x="52" y="156" font-size="16" fill="#63717c" text-anchor="start" >Remove backward</text>
+<rect x="272" y="108" width="144" height="44" rx="5" fill="#edf3f8" stroke="#547ba0"/>
+<text x="344.0" y="136.0" font-size="17" fill="#547ba0" text-anchor="middle" >Other controls</text>
+<rect x="432" y="108" width="112" height="44" rx="5" fill="#edf3f8" stroke="#547ba0"/>
+<text x="488.0" y="136.0" font-size="17" fill="#547ba0" text-anchor="middle" >Backward</text>
+<path d="M 568 130 H 632" fill="none" stroke="#c3ccd2" stroke-width="1.5" marker-end="url(#arrow)" />
+<rect x="655" y="108" width="144" height="44" rx="5" fill="#dceee7" stroke="#508a7c"/>
+<text x="727.0" y="136.0" font-size="17" fill="#508a7c" text-anchor="middle" >Other controls</text>
+<rect x="815" y="108" width="112" height="44" rx="5" fill="#f7f8f9" stroke="#9aa5ad"/>
+<text x="871.0" y="136.0" font-size="17" fill="#9aa5ad" text-anchor="middle" >Backward</text>
+<path d="M 822 145 L 920 115" fill="none" stroke="#9aa5ad" stroke-width="1.5" />
+<text x="793" y="206" font-size="22" fill="#508a7c" text-anchor="middle" >Faster learning</text>
+<path d="M 52 252 H 1068" fill="none" stroke="#e4e9ec" stroke-width="1.5" />
+<text x="52" y="343" font-size="21" fill="#23313b" text-anchor="start" >Doom</text>
+<text x="52" y="371" font-size="16" fill="#63717c" text-anchor="start" >Add movement options</text>
+<rect x="272" y="323" width="84" height="44" rx="5" fill="#edf3f8" stroke="#547ba0"/>
+<text x="314.0" y="351.0" font-size="16" fill="#547ba0" text-anchor="middle" >Forward</text>
+<rect x="366" y="323" width="84" height="44" rx="5" fill="#edf3f8" stroke="#547ba0"/>
+<text x="408.0" y="351.0" font-size="16" fill="#547ba0" text-anchor="middle" >Turn L/R</text>
+<rect x="460" y="323" width="84" height="44" rx="5" fill="#edf3f8" stroke="#547ba0"/>
+<text x="502.0" y="351.0" font-size="16" fill="#547ba0" text-anchor="middle" >Attack</text>
+<path d="M 568 345 H 632" fill="none" stroke="#c3ccd2" stroke-width="1.5" marker-end="url(#arrow)" />
+<rect x="655" y="298" width="100" height="44" rx="5" fill="#edf3f8" stroke="#547ba0"/>
+<text x="705.0" y="326.0" font-size="16" fill="#547ba0" text-anchor="middle" >Forward</text>
+<rect x="767" y="298" width="100" height="44" rx="5" fill="#edf3f8" stroke="#547ba0"/>
+<text x="817.0" y="326.0" font-size="16" fill="#547ba0" text-anchor="middle" >Turn L/R</text>
+<rect x="879" y="298" width="100" height="44" rx="5" fill="#edf3f8" stroke="#547ba0"/>
+<text x="929.0" y="326.0" font-size="16" fill="#547ba0" text-anchor="middle" >Attack</text>
+<rect x="655" y="356" width="100" height="44" rx="5" fill="#dceee7" stroke="#508a7c"/>
+<text x="705.0" y="384.0" font-size="16" fill="#508a7c" text-anchor="middle" >Backward</text>
+<rect x="767" y="356" width="100" height="44" rx="5" fill="#dceee7" stroke="#508a7c"/>
+<text x="817.0" y="384.0" font-size="16" fill="#508a7c" text-anchor="middle" >Strafe L</text>
+<rect x="879" y="356" width="100" height="44" rx="5" fill="#dceee7" stroke="#508a7c"/>
+<text x="929.0" y="384.0" font-size="16" fill="#508a7c" text-anchor="middle" >Strafe R</text>
+<text x="817" y="449" font-size="21" fill="#508a7c" text-anchor="middle" >Better performance in harder scenarios</text>
+<text x="560" y="526" font-size="22" fill="#23313b" text-anchor="middle" >The useful action set depends on the task</text>
+</g></svg>
