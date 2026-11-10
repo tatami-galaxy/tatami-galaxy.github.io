@@ -16,6 +16,8 @@ There's growing evidence that suggests that LLM representations encode informati
 
   ![Prefix activations and five later states are compressed into discrete codes. The first three future tokens are highlighted as an illustrative selection based on high mutual information, estimated across many rollouts.]({{ '/images/llm-rl/planning-horizon.svg' | relative_url }})
 
+Other interp techniques such as jlens can also be useful to identify this window.
+
 - Speculative decoding
 
 We could also use a diffusion drafter and its accepted draft length as a cheap proxy for internal plan length : 
