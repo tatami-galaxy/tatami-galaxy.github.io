@@ -5,7 +5,7 @@ permalink: /posts/2026-11-10-iterative-response-generation/
 ---
 
 <figure>
-  <video controls loop muted playsinline preload="metadata"
+  <video autoplay controls loop muted playsinline preload="metadata"
          poster="{{ '/assets/videos/iterative-response-generation.png' | relative_url }}"
          aria-label="Animation comparing standard and iterative response generation"
          aria-describedby="response-generation-caption"
