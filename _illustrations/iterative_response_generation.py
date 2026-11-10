@@ -28,7 +28,7 @@ GREEN = "#357B67"
 AMBER = "#AA6C19"
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "assets/videos"
-PLAYBACK_SPEED = 1.5
+PLAYBACK_SPEED = 2.0
 
 
 def label(value, size=24, color=INK):
