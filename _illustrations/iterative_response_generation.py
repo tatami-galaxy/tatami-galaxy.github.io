@@ -89,8 +89,6 @@ class IterativeResponseGeneration(Scene):
         sync_text = label("Sync to context", 18, GREEN).move_to([4, -3.97, 0])
         self.add(feedback.set_stroke(opacity=.5), feedback_tip.set_opacity(.5),
                  sync_text.set_opacity(.8))
-        self.add(label("Illustrative workflow • scripted text • timing is schematic", 18, MUTED)
-                 .move_to([0, -4.63, 0]))
 
         def status(panel, text, color):
             return Transform(panel["status"], label(text, 20, color)
