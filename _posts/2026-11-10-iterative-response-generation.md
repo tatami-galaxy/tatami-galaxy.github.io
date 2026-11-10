@@ -18,12 +18,14 @@ Recently [context language models](https://arxiv.org/abs/2609.37725) proposed gi
 
 Can we generalize this for response generation itself? We want the final response to be a text file which the model can iteratively build and edit as it reasons via its chain of thought. Intuitively, this allows the model to refine its final response freely without needing to commit to a fully structured final response at the end of its COT budget. 
 
-Option 1 : Diffusion drafter drafts COT at forks into output file, content is appended to COT 
+Option 1 : Diffusion drafter drafts COT upto reasoning forks into output file, content is appended to COT 
 
-Option 2 : 
+Option 2 :
 
+```text
 Append-only reasoning history ──┐
-                               ├── Model → reasoning or edit action
-Mutable document memory ───────┘                 │
-          ↑                                     │
-          └──────── apply edit and save file ───┘
+                                ├── Model → reasoning or edit action
+Mutable document memory ────────┘                │
+          ↑                                      │
+          └──── apply edit and save file ────────┘
+```
