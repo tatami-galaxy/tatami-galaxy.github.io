@@ -28,6 +28,7 @@ GREEN = "#357B67"
 AMBER = "#AA6C19"
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "assets/videos"
+PLAYBACK_SPEED = 1.5
 
 
 def label(value, size=24, color=INK):
@@ -97,59 +98,59 @@ class IterativeResponseGeneration(Scene):
         def think(index):
             self.play(*[AddTextLetterByLetter(p["rows"][index]) for p in panels],
                       *[status(p, "Thinking…", BLUE if p is left else GREEN) for p in panels],
-                      run_time=1.3)
-            self.wait(.6)
+                      run_time=1.3 / PLAYBACK_SPEED)
+            self.wait(.6 / PLAYBACK_SPEED)
 
         def sync():
             pulse = Dot(radius=.065, color=GREEN).move_to(feedback.get_start())
             self.play(feedback.animate.set_stroke(opacity=1), feedback_tip.animate.set_opacity(1),
                       sync_text.animate.set_opacity(1), status(right, "Syncing…", GREEN),
-                      run_time=.25)
+                      run_time=.25 / PLAYBACK_SPEED)
             self.add(pulse)
-            self.play(MoveAlongPath(pulse, feedback), run_time=.65, rate_func=linear)
+            self.play(MoveAlongPath(pulse, feedback), run_time=.65 / PLAYBACK_SPEED, rate_func=linear)
             self.remove(pulse)
             self.play(feedback.animate.set_stroke(opacity=.5), feedback_tip.animate.set_opacity(.5),
-                      sync_text.animate.set_opacity(.8), run_time=.2)
+                      sync_text.animate.set_opacity(.8), run_time=.2 / PLAYBACK_SPEED)
 
-        self.wait(.8)
+        self.wait(.8 / PLAYBACK_SPEED)
         think(0)
         think(1)
         draft = at_left(label("Walk to the museum.", 27, GREEN), 1.02, -2.17)
-        self.play(FadeOut(right["empty"]), status(right, "Adding…", GREEN), run_time=.25)
-        self.play(AddTextLetterByLetter(draft), run_time=1.25)
-        self.wait(.7)
+        self.play(FadeOut(right["empty"]), status(right, "Adding…", GREEN), run_time=.25 / PLAYBACK_SPEED)
+        self.play(AddTextLetterByLetter(draft), run_time=1.25 / PLAYBACK_SPEED)
+        self.wait(.7 / PLAYBACK_SPEED)
         sync()
         think(2)
         second = at_left(label("Rain is expected.", 27, GREEN), 1.02, -2.89)
         self.play(status(right, "Adding…", GREEN), AddTextLetterByLetter(second),
-                  draft.animate.set_color(INK), run_time=1.2)
+                  draft.animate.set_color(INK), run_time=1.2 / PLAYBACK_SPEED)
         sync()
         think(3)
 
         # Make the change visible: strike out the old sentence, then replace it.
         self.play(status(right, "Revising…", AMBER), draft.animate.set_color(AMBER),
-                  second.animate.set_color(INK), run_time=.3)
+                  second.animate.set_color(INK), run_time=.3 / PLAYBACK_SPEED)
         strike = Line(draft.get_left(), draft.get_right(), color=AMBER, stroke_width=2)
-        self.play(Create(strike), run_time=.35)
-        self.wait(.65)
-        self.play(FadeOut(draft), FadeOut(strike), run_time=.25)
+        self.play(Create(strike), run_time=.35 / PLAYBACK_SPEED)
+        self.wait(.65 / PLAYBACK_SPEED)
+        self.play(FadeOut(draft), FadeOut(strike), run_time=.25 / PLAYBACK_SPEED)
         revised = at_left(label("Take the bus to the museum.", 27, AMBER), 1.02, -2.17)
-        self.play(AddTextLetterByLetter(revised), run_time=1.4)
+        self.play(AddTextLetterByLetter(revised), run_time=1.4 / PLAYBACK_SPEED)
         sync()
 
         self.play(status(left, "Writing answer…", BLUE),
                   status(right, "Final response", GREEN),
                   revised.animate.set_color(INK),
                   right["document"].animate.set_stroke(GREEN, width=2),
-                  FadeOut(left["empty"]), run_time=.4)
+                  FadeOut(left["empty"]), run_time=.4 / PLAYBACK_SPEED)
         final_first = at_left(label("Take the bus to the museum.", 27), -6.98, -2.17)
         final_second = at_left(label("Rain is expected.", 27), -6.98, -2.89)
         # A single forward answer pass, only after the reasoning phase ends.
-        self.play(Succession(AddTextLetterByLetter(final_first, run_time=1.7),
-                             AddTextLetterByLetter(final_second, run_time=1.1)))
+        self.play(Succession(AddTextLetterByLetter(final_first, run_time=1.7 / PLAYBACK_SPEED),
+                             AddTextLetterByLetter(final_second, run_time=1.1 / PLAYBACK_SPEED)))
         self.play(status(left, "Final response", BLUE),
-                  left["document"].animate.set_stroke(BLUE, width=2), run_time=.4)
-        self.wait(3)
+                  left["document"].animate.set_stroke(BLUE, width=2), run_time=.4 / PLAYBACK_SPEED)
+        self.wait(3 / PLAYBACK_SPEED)
 
 
 def render():
@@ -175,7 +176,7 @@ def render():
         # A mid-animation poster exposes the difference before playback starts.
         with av.open(str(OUT / "iterative-response-generation.mp4")) as video:
             for frame in video.decode(video=0):
-                if frame.time >= 15:
+                if frame.time >= 15 / PLAYBACK_SPEED:
                     frame.to_image().save(OUT / "iterative-response-generation.png")
                     break
 
